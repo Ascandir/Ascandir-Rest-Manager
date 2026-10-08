@@ -1,14 +1,23 @@
 name: Release
 
-# Läuft automatisch, sobald eine Versionsmarke (Tag) wie "v1.0.0" hochgeladen wird,
-# und erstellt daraus das Release mit module.json und module.zip.
+# Neue Version veröffentlichen:
+#   GitHub → Reiter "Actions" → links "Release" → "Run workflow" → Versionsnummer eintragen (z. B. 1.0.0) → grüner Knopf.
+# Alternativ läuft es auch, wenn auf GitHub von Hand ein Release veröffentlicht wird.
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versionsnummer, z. B. 1.0.0"
+        required: true
+  release:
+    types: [published]
 
 permissions:
   contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -16,23 +25,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Version bestimmen
+        id: v
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            V="${{ github.event.inputs.version }}"
+          else
+            V="${GITHUB_REF_NAME}"
+          fi
+          V="${V#v}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "tag=v$V" >> "$GITHUB_OUTPUT"
+
       - name: Version und Links in module.json eintragen
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
           REPO="${{ github.repository }}"
-          jq --arg v "$VERSION" \
+          TAG="${{ steps.v.outputs.tag }}"
+          jq --arg v "${{ steps.v.outputs.version }}" \
              --arg url "https://github.com/$REPO" \
              --arg man "https://github.com/$REPO/releases/latest/download/module.json" \
-             --arg dl  "https://github.com/$REPO/releases/download/${GITHUB_REF_NAME}/module.zip" \
+             --arg dl  "https://github.com/$REPO/releases/download/$TAG/module.zip" \
              '.version=$v | .url=$url | .manifest=$man | .download=$dl' module.json > tmp.json
           mv tmp.json module.json
 
       - name: Modul packen
         run: zip -r module.zip module.json scripts styles README.md
 
-      - name: Dateien an das Release hängen
+      - name: Release erstellen und Dateien anhängen
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: ${{ steps.v.outputs.tag }}
+          make_latest: true
           files: |
             module.json
             module.zip
