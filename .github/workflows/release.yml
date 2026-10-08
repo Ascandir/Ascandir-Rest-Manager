@@ -1,9 +1,11 @@
 name: Release
 
-# Läuft automatisch, wenn auf GitHub ein Release (z. B. Tag "v1.0.0") veröffentlicht wird.
+# Läuft automatisch, sobald eine Versionsmarke (Tag) wie "v1.0.0" hochgeladen wird,
+# und erstellt daraus das Release mit module.json und module.zip.
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: write
