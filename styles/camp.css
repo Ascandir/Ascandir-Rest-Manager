@@ -44,14 +44,30 @@
   font-family: var(--cr-serif);
   font-variant-numeric: lining-nums;
   /* Kein eigener Fensterrand: die gemalte Rahmenform ist die Fensterkante */
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.65));
+  --background: transparent;
+  --color-bg: transparent;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
   overflow: hidden;
 }
+/* Foundry-eigene Zusatzebenen (Hintergrund, Unschärfe, Rahmen) an diesem Fenster abschalten */
+#camp-rest-app.application::before,
+#camp-rest-app.application::after,
+#camp-rest-app .window-header::before,
+#camp-rest-app .window-header::after,
+#camp-rest-app .window-content::before,
+#camp-rest-app .window-content::after {
+  content: none !important;
+  display: none !important;
+}
+#camp-rest-app .window-header,
+#camp-rest-app .window-content { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; }
+#camp-rest-app .window-resize-handle { background: none !important; border: 0 !important; box-shadow: none !important; }
 
 /* --- Kopfzeile: linke Kappe + gestrecktes Holz + rechte Kappe --- */
 #camp-rest-app .window-header {
@@ -61,6 +77,7 @@
   margin: 0;
   padding: 0 140px 0 156px;
   gap: 10px;
+  background-color: transparent !important;
   background:
     url("../assets/ui/hdr-left.png?v=__VERSION__") left top / auto 100% no-repeat,
     url("../assets/ui/hdr-right.png?v=__VERSION__") right top / auto 100% no-repeat,
