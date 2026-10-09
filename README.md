@@ -1,6 +1,14 @@
-# Rest Manager by Ascandir
+# Ascandir - Rest Manager
 
 Überarbeitete lange Rast für **Foundry VTT v14** und **D&D 5e 5.3**.
+
+## Installation
+
+In Foundry unter *Module installieren* diese Manifest-URL einfügen:
+
+```
+https://github.com/Ascandir/Ascandir-Rest-Manager/releases/latest/download/module.json
+```
 
 ## So läuft es ab
 
@@ -16,7 +24,7 @@ Spieler, die das Fenster geschlossen haben, öffnen es über **„Lager öffnen�
 
 ## Einstellungen (nur SL)
 
-*Spieleinstellungen → Moduleinstellungen → Rest Manager by Ascandir*
+*Spieleinstellungen → Moduleinstellungen → Ascandir - Rest Manager*
 
 - **Vorräte festlegen:** Welche Gegenstände zählen (Name oder Identifier), wie viele Punkte ein Stück wert ist, wie viele Punkte jeder Charakter braucht. Gegenstände lassen sich hineinziehen.
 - **Strafe festlegen:** Keine Rast · keine Trefferpunkte · keine Trefferwürfel · keine Zauberplätze · zusätzliche Erschöpfung · eigene Chatnachricht.
@@ -24,5 +32,5 @@ Spieler, die das Fenster geschlossen haben, öffnen es über **„Lager öffnen�
 ## Makro
 
 ```js
-game.modules.get("rest-manager-by-ascandir").api.startRequest();
+game.modules.get("ascandir-rest-manager").api.startRequest();
 ```

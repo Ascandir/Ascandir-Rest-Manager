@@ -1,10 +1,10 @@
 /**
- * Rest Manager by Ascandir
+ * Ascandir - Rest Manager
  * Gemeinsame lange Rast mit Rationen / Lagervorräten für D&D 5e.
  * Foundry VTT v13/v14 · dnd5e 5.x
  */
 
-const MOD = "rest-manager-by-ascandir";
+const MOD = "ascandir-rest-manager";
 const SOCKET = `module.${MOD}`;
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
 
@@ -658,7 +658,31 @@ Hooks.once("init", () => {
   });
 });
 
+/** Einstellungen aus der alten Modulversion ("rest-manager-by-ascandir") übernehmen. */
+async function migrateOldSettings() {
+  if (!game.user.isActiveGM) return;
+  const OLD = "rest-manager-by-ascandir";
+  const stored = game.settings.storage.get("world");
+  const isStored = (key) => !!stored?.find((s) => s.key === key);
+  let moved = 0;
+  for (const name of ["supplyConfig", "penaltyConfig"]) {
+    if (isStored(`${MOD}.${name}`)) continue;            // schon eigene Werte vorhanden
+    const old = stored?.find((s) => s.key === `${OLD}.${name}`);
+    if (!old) continue;
+    let value = old.value;
+    if (typeof value === "string") {
+      try { value = JSON.parse(value); } catch { continue; }
+    }
+    if (!value || typeof value !== "object") continue;
+    await game.settings.set(MOD, name, value);
+    moved++;
+  }
+  if (moved) ui.notifications.info("Ascandir - Rest Manager: Einstellungen aus der alten Version übernommen.");
+}
+
 Hooks.once("ready", () => {
+  migrateOldSettings().catch((err) => console.warn(`${MOD} | Übernahme alter Einstellungen fehlgeschlagen`, err));
+
   game.socket.on(SOCKET, (payload) => {
     if (payload?.action === "notify") {
       if (payload.target === game.user.id) ui.notifications.warn(payload.msg);
