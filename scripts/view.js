@@ -94,5 +94,5 @@ export function campView(vm) {
       <span class="cr-bar-count">Ausgewählt: ${done} / ${total}</span>
     </div>
     <div class="cr-members">${vm.members.map((m) => card(m, vm)).join("")}</div>
-    <footer class="cr-footer">${footer}</footer>`;
+    <footer class="cr-footer"><div class="cr-provisions" aria-hidden="true"></div>${footer}</footer>`;
 }

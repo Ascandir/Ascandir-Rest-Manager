@@ -57,7 +57,7 @@
   height: 74px;
   min-height: 74px;
   margin: 0 26px;
-  padding: 0 70px 0 132px;
+  padding: 0 42px 0 132px;
   gap: 14px;
   background: url("../assets/wood-header.png") center / 100% 100%;
   border: none;
@@ -99,22 +99,25 @@
   border: none;
   white-space: nowrap;
 }
+/* Weitere Kopfzeilen-Knöpfe (z. B. ⋮-Menü): gemaltes Medaillon wie der Schließknopf */
 #camp-rest-app .window-header .header-control {
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: 46px;
+  height: 46px;
   margin: 0 0 0 auto;
   padding: 0;
   display: grid;
   place-items: center;
-  font-size: 0.85rem;
-  color: var(--cr-gold-hi);
-  background: radial-gradient(circle at 40% 35%, #4a3523, #140c07 70%);
-  border: 1px solid var(--cr-gold);
+  font-size: 1.05rem;
+  color: #ecdcb7;
+  text-shadow: 0 1px 2px #000;
+  background: url("../assets/medallion.png") center / contain no-repeat;
+  border: none;
   border-radius: 50%;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.7);
   z-index: 5;
 }
-#camp-rest-app .window-header .header-control + .header-control { margin-left: 6px; }
+#camp-rest-app .window-header .header-control + .header-control { margin-left: 4px; }
 #camp-rest-app .window-header .header-control[data-action="close"] {
   position: absolute;
   top: 7px;
@@ -351,6 +354,7 @@
 }
 #camp-rest-app .cr-card {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -511,11 +515,9 @@
   align-items: center;
   gap: 18px;
   margin: 6px calc(-1 * var(--cr-side) + 26px) 0;
-  padding: 18px 40px 22px 200px;
+  padding: 18px 40px 22px 310px;
   min-height: 128px;
-  background:
-    url("../assets/provisions.png") left bottom / auto 128px no-repeat,
-    url("../assets/wood-footer.png") center / 100% 100%;
+  background: url("../assets/wood-footer.png") center / 100% 100%;
   border-top: 2px solid #120b06;
   border-bottom: 2px solid #a07a36;
   box-shadow: inset 0 1px 0 var(--cr-gold-lo);
@@ -531,6 +533,18 @@
   border: 1px solid #1a1006;
   transform: translateX(-50%) rotate(45deg);
 }
+#camp-rest-app .cr-provisions {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  height: 240px;
+  background: url("../assets/provisions.png") left bottom / contain no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+#camp-rest-app .cr-footer-hint,
+#camp-rest-app .cr-footer-buttons { position: relative; z-index: 1; }
 #camp-rest-app .cr-footer-hint {
   flex: 1;
   text-align: center;
@@ -597,7 +611,8 @@
   #camp-rest-app .cr-stores { padding-right: 70px; flex-wrap: wrap; }
 }
 @container crwin (max-width: 860px) {
-  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 54px; background: url("../assets/wood-footer.png") center / 100% 100%; }
+  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 54px; }
+  #camp-rest-app .cr-provisions { display: none; }
   #camp-rest-app .cr-btn.cr-start { min-width: 0; }
   #camp-rest-app .cr-summary { font-size: 1.2rem; }
   #camp-rest-app .window-title { font-size: 1.8rem; }
