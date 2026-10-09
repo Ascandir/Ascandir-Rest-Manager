@@ -64,6 +64,14 @@ function supplyValue(item) {
   return 0;
 }
 
+/** Gemaltes Symbol für Rationen/Lagervorräte, sonst das Bild des Gegenstands. */
+function chipImage(item) {
+  const n = norm(item.name);
+  if (/ration|proviant|essen|food/.test(n)) return `modules/${MOD}/assets/icon-bread.png`;
+  if (/camp|lager|vorrat|supplies/.test(n)) return `modules/${MOD}/assets/icon-crate.png`;
+  return item.img;
+}
+
 /** Summe der Vorrats-Punkte, die für einen Charakter ins Lager gelegt wurden. */
 function suppliedFor(state, actorId) {
   return (state.pledges ?? []).filter((p) => p.toActorId === actorId)
@@ -127,7 +135,7 @@ async function handleRequest({ action, data, userId }) {
       if (existing) existing.qty += qty;
       else state.pledges.push({
         id: foundry.utils.randomID(),
-        itemUuid: item.uuid, itemName: item.name, img: item.img,
+        itemUuid: item.uuid, itemName: item.name, img: chipImage(item),
         fromActorId: owner.id, fromName: owner.name,
         toActorId: data.toActorId, qty, value
       });
@@ -341,7 +349,7 @@ class CampRestApp extends ApplicationV2 {
     id: "camp-rest-app",
     classes: ["camp-rest", "camp-rest-window"],
     window: { title: "Lager für die lange Rast", icon: "fa-solid fa-campground", resizable: true },
-    position: { width: 1000, height: "auto" },
+    position: { width: 1100, height: "auto" },
     actions: {
       unpledge: CampRestApp.onUnpledge,
       togglePenalty: CampRestApp.onTogglePenalty,
@@ -387,7 +395,7 @@ class CampRestApp extends ApplicationV2 {
     // Eigene Vorräte (alle eigenen Akteure, auch Begleiter oder ein Gruppenlager)
     const supplies = isGM ? [] : game.actors.filter((a) => a.isOwner)
       .flatMap((a) => a.items.contents.filter((i) => supplyValue(i) > 0).map((i) => ({
-        uuid: i.uuid, img: i.img, name: i.name, owner: a.name,
+        uuid: i.uuid, img: chipImage(i), name: i.name, owner: a.name,
         left: (Number(i.system.quantity) || 0) - pledgedOf(state, i.uuid)
       })));
 

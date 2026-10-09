@@ -10,25 +10,22 @@
 
 /* ---------- Farben ---------- */
 .camp-rest {
-  --cr-ink: #2b1a0e;
-  --cr-ink-soft: #5a4128;
-  --cr-parch: #ead8b0;
-  --cr-parch-hi: #f5e8c8;
-  --cr-parch-lo: #c9a96e;
-  --cr-gold: #c9a24e;
-  --cr-gold-hi: #f2d78e;
-  --cr-gold-lo: #6e5221;
-  --cr-red: #8e1f17;
-  --cr-red-hi: #b8321f;
-  --cr-ok: #3d6b2f;
-  --cr-ok-hi: #6fae4f;
-  --cr-leather: #1c120b;
-  --cr-leather-hi: #2e2015;
+  --cr-ink: #24170c;
+  --cr-ink-soft: #4e3720;
+  --cr-parch: #e6cf9f;
+  --cr-parch-hi: #f3e3bd;
+  --cr-parch-lo: #b99461;
+  --cr-gold: #c49a4c;
+  --cr-gold-hi: #efd28c;
+  --cr-gold-lo: #6b4f22;
+  --cr-red: #8c1c14;
+  --cr-red-hi: #b12a1c;
+  --cr-ok: #3c7426;
+  --cr-text-light: #ecdcb7;
   --cr-serif: "CR Alegreya", "Alegreya", Georgia, serif;
-  --cr-sc: "CR Alegreya SC", "CR Alegreya", Georgia, serif;
   --cr-paper:
     url("../assets/parchment.svg"),
-    radial-gradient(ellipse at 50% 40%, var(--cr-parch-hi) 0%, var(--cr-parch) 55%, var(--cr-parch-lo) 100%);
+    radial-gradient(ellipse at 50% 45%, var(--cr-parch-hi) 0%, var(--cr-parch) 55%, var(--cr-parch-lo) 100%);
 }
 
 /* =====================================================================
@@ -36,163 +33,198 @@
    ===================================================================== */
 
 #camp-rest-app.application {
-  min-width: 420px;
+  --cr-side: 40px;                 /* Abstand Inhalt <-> Rahmenpfosten */
+  min-width: 560px;
+  container: crwin / inline-size;
   color: var(--cr-ink);
   font-family: var(--cr-serif);
+  font-variant-numeric: lining-nums;
   background:
     url("../assets/wood.svg"),
-    linear-gradient(180deg, #3a2716 0%, #24170d 50%, #1a1009 100%);
-  border: 2px solid #0d0805;
-  border-radius: 6px;
-  box-shadow:
-    inset 0 0 0 4px #3b2716,
-    inset 0 0 0 5px var(--cr-gold-lo),
-    inset 0 0 40px rgba(0, 0, 0, 0.7),
-    0 14px 50px rgba(0, 0, 0, 0.75);
+    linear-gradient(180deg, #2b1c10 0%, #1d130a 60%, #150d07 100%);
+  border: 2px solid #070403;
+  border-radius: 4px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.8);
   overflow: hidden;
 }
 
 /* --- Kopfzeile --- */
 #camp-rest-app .window-header {
   position: relative;
-  height: 58px;
-  min-height: 58px;
-  padding: 0 14px 0 112px;
-  gap: 10px;
-  background:
-    linear-gradient(180deg, rgba(255, 220, 150, 0.06), rgba(0, 0, 0, 0.35)),
-    var(--cr-leather);
+  height: 74px;
+  min-height: 74px;
+  margin: 0 26px;
+  padding: 0 70px 0 132px;
+  gap: 14px;
+  background: url("../assets/wood-header.png") center / 100% 100%;
   border: none;
-  border-bottom: 1px solid var(--cr-gold-lo);
-  box-shadow: 0 1px 0 rgba(242, 215, 142, 0.18), 0 3px 8px rgba(0, 0, 0, 0.6);
-  color: var(--cr-parch-hi);
-  margin: 6px 6px 0;
-  border-radius: 3px 3px 0 0;
+  border-bottom: 2px solid #120b06;
+  box-shadow: 0 1px 0 var(--cr-gold-lo), 0 4px 10px rgba(0, 0, 0, 0.6);
+  color: var(--cr-text-light);
+}
+#camp-rest-app .window-header::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 11px;
+  height: 11px;
+  transform: translateX(-50%) rotate(45deg);
+  background: linear-gradient(135deg, var(--cr-gold-hi), var(--cr-gold-lo));
+  border: 1px solid #1a1006;
+  z-index: 1;
 }
 #camp-rest-app .window-icon {
-  font-size: 1.5rem;
-  color: var(--cr-gold-hi);
-  text-shadow: 0 1px 2px #000;
   flex: 0 0 auto;
+  width: 54px;
+  height: 46px;
+  font-size: 0;
+  background: var(--cr-text-light);
+  -webkit-mask: url("../assets/icon-tent.png") center / contain no-repeat;
+  mask: url("../assets/icon-tent.png") center / contain no-repeat;
+  filter: drop-shadow(0 2px 2px #000);
 }
+#camp-rest-app .window-icon::before { content: none; }
 #camp-rest-app .window-title {
   font-family: var(--cr-serif);
   font-weight: 700;
-  font-size: 1.75rem;
-  letter-spacing: 0.01em;
-  color: var(--cr-parch-hi);
-  text-shadow: 0 2px 3px #000;
+  font-size: 2.3rem;
+  color: var(--cr-text-light);
+  text-shadow: 0 2px 4px #000;
   margin: 0;
   border: none;
+  white-space: nowrap;
 }
 #camp-rest-app .window-header .header-control {
-  flex: 0 0 auto;
-  width: 38px;
-  height: 38px;
-  margin-left: auto;
+  position: absolute;
+  top: 7px;
+  right: -20px;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+  padding: 0;
+  border: none;
   border-radius: 50%;
-  font-size: 1.1rem;
-  color: var(--cr-gold-hi);
-  background: radial-gradient(circle at 40% 35%, #4a3523, #140c07 70%);
-  border: 2px solid var(--cr-gold);
-  box-shadow: 0 0 0 2px #140c07, 0 2px 6px rgba(0, 0, 0, 0.8);
-  z-index: 3;
+  font-size: 0;
+  color: transparent;
+  background: url("../assets/close.png") center / contain no-repeat;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+  z-index: 5;
 }
-#camp-rest-app .window-header .header-control + .header-control { margin-left: 6px; }
-#camp-rest-app .window-header .header-control:hover {
-  color: #fff;
-  border-color: var(--cr-gold-hi);
-  box-shadow: 0 0 0 2px #140c07, 0 0 12px rgba(255, 170, 60, 0.6);
-}
+#camp-rest-app .window-header .header-control:hover { filter: brightness(1.25); box-shadow: 0 0 14px rgba(255, 170, 60, 0.6); }
+#camp-rest-app .window-header .header-control + .header-control { right: 40px; }
 
 /* --- Inhalt --- */
 #camp-rest-app .window-content {
-  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 12px 20px 14px;
+  padding: 16px var(--cr-side) 0;
   background: none;
   color: var(--cr-ink);
   overflow: hidden auto;
 }
 
-/* --- Verzierungen --- */
-#camp-rest-app .cr-deco {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-}
-#camp-rest-app.minimized .cr-deco > :not(.cr-corners) { display: none; }
-#camp-rest-app .cr-corners {
-  position: absolute;
-  inset: 2px;
-  background:
-    url("../assets/corner-tl.svg") top left / 46px no-repeat,
-    url("../assets/corner-tr.svg") top right / 46px no-repeat,
-    url("../assets/corner-bl.svg") bottom left / 46px no-repeat,
-    url("../assets/corner-br.svg") bottom right / 46px no-repeat;
-}
-#camp-rest-app .cr-banner {
-  position: absolute;
-  left: 18px;
+/* --- Gemalte Verzierungen --- */
+#camp-rest-app .cr-deco { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+#camp-rest-app.minimized .cr-deco > :not(.cr-corner, .cr-post) { display: none; }
+#camp-rest-app .cr-deco > div { position: absolute; background-repeat: no-repeat; background-size: contain; }
+#camp-rest-app .cr-post {
   top: 0;
-  width: 84px;
-  height: 178px;
-  background: url("../assets/banner.svg") center / contain no-repeat;
-  filter: drop-shadow(3px 5px 4px rgba(0, 0, 0, 0.7));
+  bottom: 0;
+  width: 26px;
+  background:
+    linear-gradient(90deg, #0b0604 0%, #3a2715 30%, #5a3d1f 50%, #2c1c0e 75%, #0b0604 100%);
+  box-shadow: inset 0 0 0 1px rgba(196, 154, 76, 0.25);
+}
+#camp-rest-app .cr-post.left { left: 0; }
+#camp-rest-app .cr-post.right { right: 0; }
+#camp-rest-app .cr-curtain.left { left: 0; top: 8px; width: 155px; height: 584px; background-image: url("../assets/curtain-left.png"); }
+#camp-rest-app .cr-curtain.right { right: 0; top: 7px; width: 203px; height: 618px; background-image: url("../assets/curtain-right.png"); background-position: right top; }
+#camp-rest-app .cr-corner.tl { left: 2px; top: 6px; width: 44px; height: 70px; background-image: url("../assets/corner-tl.png"); }
+#camp-rest-app .cr-corner.br { right: 0; bottom: 0; width: 80px; height: 82px; background-image: url("../assets/corner-br.png"); background-position: right bottom; }
+#camp-rest-app .cr-banner {
+  left: 42px;
+  top: 5px;
+  width: 86px;
+  height: 169px;
+  background-image: url("../assets/banner.png");
+  filter: drop-shadow(3px 6px 5px rgba(0, 0, 0, 0.6));
   transform-origin: 50% 0;
-  animation: cr-sway 7s ease-in-out infinite;
+  animation: cr-sway 8s ease-in-out infinite;
 }
 #camp-rest-app .cr-lantern {
-  position: absolute;
-  right: 12px;
-  top: 60px;
-  width: 50px;
-  height: 110px;
-  background: url("../assets/lantern.svg") center / contain no-repeat;
-  filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.7));
+  right: 0;
+  top: 58px;
+  width: 70px;
+  height: 191px;
+  background-image: url("../assets/lantern.png");
+  filter: drop-shadow(2px 5px 4px rgba(0, 0, 0, 0.7));
   transform-origin: 50% 0;
-  animation: cr-sway 5s ease-in-out infinite reverse;
+  animation: cr-sway 6s ease-in-out infinite reverse;
 }
 #camp-rest-app .cr-glow {
   position: absolute;
   left: 50%;
-  top: 52%;
-  width: 150px;
-  height: 150px;
+  top: 46%;
+  width: 190px;
+  height: 190px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 180, 80, 0.45) 0%, rgba(255, 140, 40, 0.15) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 175, 70, 0.4) 0%, rgba(255, 130, 30, 0.14) 40%, transparent 70%);
   mix-blend-mode: screen;
   animation: cr-flicker 2.6s infinite;
 }
-#camp-rest-app .cr-crates {
-  position: absolute;
-  left: 4px;
-  bottom: 2px;
-  width: 168px;
-  height: 115px;
-  background: url("../assets/crates.svg") left bottom / contain no-repeat;
-  filter: drop-shadow(2px -1px 4px rgba(0, 0, 0, 0.6));
+#camp-rest-app .cr-provisions {
+  left: 0;
+  bottom: 0;
+  width: 355px;
+  height: 266px;
+  background-image: url("../assets/provisions.png");
+  background-position: left bottom;
 }
 
 @keyframes cr-sway {
-  0%, 100% { transform: rotate(-0.8deg); }
-  50% { transform: rotate(0.8deg); }
+  0%, 100% { transform: rotate(-0.7deg); }
+  50% { transform: rotate(0.7deg); }
 }
 @keyframes cr-flicker {
-  0%, 100% { opacity: 0.85; }
-  12% { opacity: 1; }
-  25% { opacity: 0.7; }
-  40% { opacity: 0.95; }
-  55% { opacity: 0.75; }
-  70% { opacity: 1; }
-  85% { opacity: 0.8; }
+  0%, 100% { opacity: 0.85; } 12% { opacity: 1; } 25% { opacity: 0.7; } 40% { opacity: 0.95; }
+  55% { opacity: 0.75; } 70% { opacity: 1; } 85% { opacity: 0.8; }
 }
 @media (prefers-reduced-motion: reduce) {
   #camp-rest-app .cr-banner, #camp-rest-app .cr-lantern, #camp-rest-app .cr-glow { animation: none; }
+}
+
+/* Einfärbbare Symbole */
+#camp-rest-app .cr-sack,
+#camp-rest-app .cr-group,
+#camp-rest-app .cr-campfire {
+  display: inline-block;
+  flex: 0 0 auto;
+  background: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+}
+#camp-rest-app .cr-sack { width: 17px; height: 22px; -webkit-mask-image: url("../assets/icon-sack.png"); mask-image: url("../assets/icon-sack.png"); color: #2a1a0d; }
+#camp-rest-app .cr-sack.big { width: 44px; height: 57px; }
+#camp-rest-app .cr-group { width: 36px; height: 32px; -webkit-mask-image: url("../assets/icon-group.png"); mask-image: url("../assets/icon-group.png"); color: var(--cr-text-light); }
+#camp-rest-app .cr-campfire { width: 36px; height: 40px; -webkit-mask-image: url("../assets/icon-campfire.png"); mask-image: url("../assets/icon-campfire.png"); }
+#camp-rest-app .cr-flame { display: inline-block; width: 34px; height: 44px; background: url("../assets/icon-flame.png") center / contain no-repeat; }
+#camp-rest-app .cr-bread { display: inline-block; width: 34px; height: 28px; background: url("../assets/icon-bread.png") center / contain no-repeat; }
+
+/* Pergament-Grundform */
+#camp-rest-app .cr-summary,
+#camp-rest-app .cr-stores,
+#camp-rest-app .cr-card {
+  background: var(--cr-paper);
+  border: 2px solid #20140a;
+  box-shadow:
+    inset 0 0 0 3px rgba(243, 227, 189, 0.3),
+    inset 0 0 0 4px rgba(107, 79, 34, 0.75),
+    inset 0 0 26px rgba(80, 50, 15, 0.55),
+    0 4px 10px rgba(0, 0, 0, 0.65);
 }
 
 /* --- Zusammenfassung --- */
@@ -202,166 +234,161 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin: 0 56px 0 92px;
-  padding: 10px 16px;
-  background: var(--cr-paper);
-  border-top: 2px solid #3b2716;
-  border-bottom: 2px solid #3b2716;
-  box-shadow: inset 0 0 18px rgba(90, 60, 20, 0.45), 0 2px 6px rgba(0, 0, 0, 0.5);
-  font-size: 1.35rem;
-  color: var(--cr-ink);
+  min-height: 58px;
+  margin: 0 46px 0 90px;
+  padding: 6px 16px;
+  border-radius: 2px;
+  font-size: 1.5rem;
 }
 #camp-rest-app .cr-summary::before,
 #camp-rest-app .cr-summary::after {
   content: "";
   position: absolute;
   left: 50%;
-  width: 8px;
-  height: 8px;
-  background: var(--cr-gold);
-  border: 1px solid #2a1c0a;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, var(--cr-gold-hi), var(--cr-gold-lo));
+  border: 1px solid #1a1006;
   transform: translateX(-50%) rotate(45deg);
 }
-#camp-rest-app .cr-summary::before { top: -6px; }
-#camp-rest-app .cr-summary::after { bottom: -6px; }
-#camp-rest-app .cr-summary > i { font-size: 1.9rem; color: var(--cr-red); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.4)); }
+#camp-rest-app .cr-summary::before { top: -7px; }
+#camp-rest-app .cr-summary::after { bottom: -7px; }
+#camp-rest-app .cr-summary em { font-style: normal; font-weight: 700; font-size: 2.3rem; line-height: 1; color: var(--cr-red); vertical-align: -0.12em; }
 #camp-rest-app .cr-summary b { font-weight: 700; }
-#camp-rest-app .cr-dot { margin: 0 0.45em; }
+#camp-rest-app .cr-dot { margin: 0 0.5em; }
 
 /* --- Vorräte --- */
 #camp-rest-app .cr-stores {
   position: relative;
-  min-height: 120px;
   display: flex;
   align-items: center;
-  background: var(--cr-paper);
-  border: 1px solid #1e130a;
-  border-radius: 3px;
-  box-shadow:
-    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
-    inset 0 0 0 4px rgba(110, 82, 33, 0.6),
-    inset 0 0 30px rgba(90, 60, 20, 0.5),
-    0 3px 8px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
+  gap: 22px;
+  min-height: 100px;
+  padding: 10px 240px 10px 24px;
+  border-radius: 2px;
 }
+#camp-rest-app .cr-stores-head { display: flex; align-items: center; gap: 12px; flex: 0 1 270px; min-width: 210px; }
+#camp-rest-app .cr-stores h3 { margin: 0; border: none; font-family: var(--cr-serif); font-weight: 700; font-size: 1.6rem; line-height: 1.15; color: var(--cr-ink); }
+#camp-rest-app .cr-stores p { margin: 2px 0 0; font-size: 1.05rem; color: var(--cr-ink-soft); }
 #camp-rest-app .cr-sketch {
   position: absolute;
+  right: 34px;
   bottom: 4px;
-  height: 112px;
-  opacity: 0.6;
+  width: 232px;
+  height: 92px;
+  background: url("../assets/sketch.png") right bottom / contain no-repeat;
+  opacity: 0.9;
   pointer-events: none;
 }
-#camp-rest-app .cr-sketch.left { left: 10px; width: 210px; background: url("../assets/sketch-left.svg") left bottom / contain no-repeat; }
-#camp-rest-app .cr-sketch.right { right: 60px; width: 230px; background: url("../assets/sketch-right.svg") right bottom / contain no-repeat; }
-#camp-rest-app .cr-stores-body {
-  position: relative;
-  flex: 1;
-  padding: 14px 300px 14px 240px;
-}
-#camp-rest-app .cr-stores h3 {
-  margin: 0 0 6px;
-  border: none;
-  font-family: var(--cr-serif);
-  font-weight: 700;
-  font-size: 1.45rem;
-  color: var(--cr-ink);
-}
-#camp-rest-app .cr-hint {
-  margin: 0;
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--cr-ink-soft);
-}
-#camp-rest-app .cr-supplies { display: flex; flex-wrap: wrap; gap: 6px; }
+#camp-rest-app .cr-supplies { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 10px; position: relative; z-index: 1; }
 #camp-rest-app .cr-supply {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 4px 3px 3px;
-  background: linear-gradient(180deg, #fbf1d8, #e6d1a3);
-  border: 1px solid var(--cr-gold-lo);
-  border-radius: 999px;
-  box-shadow: 0 2px 3px rgba(60, 40, 15, 0.45);
+  gap: 8px;
+  height: 48px;
+  padding: 0 7px 0 8px;
+  background: linear-gradient(180deg, #f6e8c6, #e3c995);
+  border: 2px solid #8f6d39;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px rgba(255, 246, 220, 0.6), 0 2px 5px rgba(50, 30, 10, 0.45);
   cursor: grab;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   transition: transform 0.12s, box-shadow 0.12s;
 }
-#camp-rest-app .cr-supply:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(60, 40, 15, 0.5); }
+#camp-rest-app .cr-supply:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 2px rgba(255, 246, 220, 0.6), 0 5px 9px rgba(50, 30, 10, 0.5); }
 #camp-rest-app .cr-supply:active { cursor: grabbing; }
-#camp-rest-app .cr-supply img { width: 28px; height: 28px; border: 1px solid var(--cr-gold-lo); border-radius: 50%; object-fit: cover; background: #2a1c10; }
-#camp-rest-app .cr-supply-name { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#camp-rest-app .cr-supply img { width: 36px; height: 32px; object-fit: contain; border: none; }
+#camp-rest-app .cr-supply-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #camp-rest-app .cr-supply b {
-  min-width: 24px;
-  height: 24px;
-  padding: 0 6px;
+  min-width: 36px;
+  height: 30px;
+  padding: 0 9px;
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  background: var(--cr-red);
-  color: var(--cr-parch-hi);
-  font-size: 0.85rem;
+  background: radial-gradient(ellipse at 40% 30%, #c1362a, #7c140e);
+  border: 1px solid #4a0a07;
+  color: #fff;
+  font-size: 1.05rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
-#camp-rest-app .cr-supply.empty { opacity: 0.45; filter: grayscale(0.6); cursor: not-allowed; }
-#camp-rest-app .cr-supply.empty b { background: #6b5a45; }
+#camp-rest-app .cr-supply.empty { cursor: not-allowed; color: #8a7a62; background: linear-gradient(180deg, #eadcbc, #d8c49c); border-color: #b49d76; box-shadow: none; }
+#camp-rest-app .cr-supply.empty img { opacity: 0.55; filter: grayscale(0.5); }
+#camp-rest-app .cr-supply.empty b { background: #8d8273; border-color: #6c6355; }
 
-/* --- Leiste über den Karten --- */
+/* --- Leiste --- */
 #camp-rest-app .cr-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 8px 14px;
-  background: linear-gradient(180deg, #24180f, #130c07);
+  min-height: 48px;
+  padding: 4px 16px;
+  background: linear-gradient(180deg, #1f150c, #120b06);
   border-top: 1px solid var(--cr-gold-lo);
   border-bottom: 1px solid var(--cr-gold-lo);
-  box-shadow: inset 0 1px 0 rgba(242, 215, 142, 0.12);
-  color: var(--cr-parch-hi);
+  box-shadow: inset 0 1px 0 rgba(239, 210, 140, 0.12), 0 2px 6px rgba(0, 0, 0, 0.5);
+  color: var(--cr-text-light);
 }
-#camp-rest-app .cr-bar-title { font-weight: 700; font-size: 1.3rem; }
-#camp-rest-app .cr-bar-title i { color: var(--cr-gold); margin-right: 8px; }
-#camp-rest-app .cr-bar-count { font-size: 1rem; color: #d9c69c; white-space: nowrap; }
+#camp-rest-app .cr-bar-title { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 1.5rem; }
+#camp-rest-app .cr-bar-count { font-size: 1.1rem; white-space: nowrap; }
 
 /* --- Gruppenkarten --- */
 #camp-rest-app .cr-members {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-  gap: 14px;
-  padding: 2px 4px;
+  grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+  gap: 12px;
+  padding: 0 2px 4px;
 }
 #camp-rest-app .cr-card {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 10px 10px;
-  background: var(--cr-paper);
-  border: 1px solid #1e130a;
-  border-radius: 3px;
-  box-shadow:
-    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
-    inset 0 0 0 4px rgba(110, 82, 33, 0.55),
-    inset 0 0 22px rgba(90, 60, 20, 0.45),
-    0 4px 10px rgba(0, 0, 0, 0.65);
+  gap: 6px;
+  padding: 12px 10px 12px;
+  border-radius: 2px;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 #camp-rest-app .cr-card.drag-over {
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-3px);
   box-shadow:
-    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
+    inset 0 0 0 3px rgba(243, 227, 189, 0.3),
     inset 0 0 0 4px var(--cr-gold),
-    inset 0 0 22px rgba(90, 60, 20, 0.45),
-    0 0 18px rgba(255, 150, 50, 0.85);
+    inset 0 0 26px rgba(80, 50, 15, 0.55),
+    0 0 20px rgba(255, 150, 50, 0.85);
 }
-
+#camp-rest-app .cr-check {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(180deg, #f5e7c5, #dcc290);
+  border: 2px solid #2a1a0c;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+#camp-rest-app .cr-check.on::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 1px;
+  width: 7px;
+  height: 14px;
+  border: solid #1c1108;
+  border-width: 0 4px 4px 0;
+  transform: rotate(40deg);
+}
 #camp-rest-app .cr-portrait {
-  position: relative;
-  width: 108px;
-  height: 108px;
-  padding: 4px;
+  width: 124px;
+  height: 124px;
+  padding: 5px;
   border-radius: 50%;
-  background: conic-gradient(from 200deg, #6e5221, #f2d78e, #a07a35, #f2d78e, #6e5221, #c9a24e, #6e5221);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+  background: conic-gradient(from 210deg, #5e431b, #eccd85, #9c7631, #f1d590, #5e431b, #c49a4c, #5e431b);
+  box-shadow: 0 0 0 2px #1d1209, 0 4px 8px rgba(0, 0, 0, 0.6);
 }
 #camp-rest-app .cr-portrait img {
   width: 100%;
@@ -372,90 +399,67 @@
   object-position: top;
   background: radial-gradient(circle at 50% 35%, #4a3a2a, #120c07);
 }
-#camp-rest-app .cr-card.ok .cr-portrait {
-  box-shadow: 0 0 0 2px rgba(111, 174, 79, 0.6), 0 0 14px rgba(111, 174, 79, 0.55), 0 3px 6px rgba(0, 0, 0, 0.6);
+#camp-rest-app .cr-plate {
+  align-self: stretch;
+  margin: -16px 2px 0;
+  padding: 4px 8px;
+  position: relative;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  color: var(--cr-ink);
+  background: linear-gradient(180deg, #f3e2bc, #dcc08b);
+  border: 1px solid #7a5b2c;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px rgba(255, 246, 220, 0.55), 0 2px 4px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-#camp-rest-app .cr-badge {
-  position: absolute;
-  right: 0;
-  bottom: 4px;
+#camp-rest-app .cr-count { display: flex; align-items: center; gap: 10px; margin-top: 2px; font-size: 1.65rem; line-height: 1.1; }
+#camp-rest-app .cr-count b { font-weight: 700; color: var(--cr-red); }
+#camp-rest-app .cr-card.ok .cr-count b { color: var(--cr-ok); }
+
+#camp-rest-app .cr-pledges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; }
+#camp-rest-app .cr-pledges li { display: inline-flex; align-items: center; gap: 8px; }
+#camp-rest-app .cr-token {
   width: 30px;
   height: 30px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, var(--cr-ok-hi), var(--cr-ok));
-  border: 2px solid var(--cr-gold-hi);
-  color: #fff;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-#camp-rest-app .cr-plate {
-  align-self: stretch;
-  margin: -2px 4px 0;
-  padding: 3px 8px;
-  text-align: center;
-  font-family: var(--cr-serif);
-  font-weight: 700;
-  font-size: 1.15rem;
-  line-height: 1.3;
-  color: var(--cr-ink);
-  background: linear-gradient(180deg, #f6e9c9, #dcc392);
-  border: 1px solid #6e5221;
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 2px rgba(255, 248, 225, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
+  background: radial-gradient(circle at 45% 35%, #6d5a44, #1f160e);
+  border: 2px solid #1a110a;
+  box-shadow: inset 0 0 0 1px rgba(239, 210, 140, 0.35), 0 1px 2px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-
-#camp-rest-app .cr-count {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.25rem;
-}
-#camp-rest-app .cr-count i { color: #9a5f2a; font-size: 1.2rem; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35)); }
-#camp-rest-app .cr-count b { color: var(--cr-red); font-weight: 700; }
-#camp-rest-app .cr-card.ok .cr-count b { color: var(--cr-ok); }
-
-#camp-rest-app .cr-pledges {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-}
-#camp-rest-app .cr-pledges li {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 1px 2px 1px 1px;
-  background: rgba(255, 248, 225, 0.6);
-  border: 1px solid rgba(110, 82, 33, 0.6);
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-#camp-rest-app .cr-pledges img { width: 20px; height: 20px; border: none; border-radius: 50%; object-fit: cover; }
+#camp-rest-app .cr-token img { width: 24px; height: 24px; object-fit: contain; border: none; }
+#camp-rest-app .cr-qty { font-weight: 700; font-size: 1.25rem; }
 #camp-rest-app .cr-minus {
-  width: 18px;
-  height: 18px;
+  position: relative;
+  width: 27px;
+  height: 27px;
   min-height: 0;
   padding: 0;
-  line-height: 1;
-  display: grid;
-  place-items: center;
-  font-size: 0.6rem;
   border-radius: 50%;
-  color: var(--cr-parch-hi);
-  background: var(--cr-red);
-  border: 1px solid #4a0c0a;
+  background: radial-gradient(circle at 40% 30%, #c8382a, #7a140d);
+  border: 1px solid #3e0805;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
-#camp-rest-app .cr-minus:hover { background: var(--cr-red-hi); }
+#camp-rest-app .cr-minus::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 13px;
+  height: 3px;
+  transform: translate(-50%, -50%);
+  background: #fff3e0;
+  border-radius: 2px;
+}
+#camp-rest-app .cr-minus:hover { filter: brightness(1.15); }
 
 #camp-rest-app .cr-drop {
   align-self: stretch;
@@ -463,109 +467,130 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 7px 6px;
-  border: 1px dashed #6e5221;
-  border-radius: 4px;
-  background: rgba(255, 248, 225, 0.25);
-  font-size: 0.92rem;
-  color: var(--cr-ink);
+  gap: 6px;
+  min-height: 42px;
+  padding: 4px 4px;
+  border: 1px dashed #6b4f22;
+  border-radius: 3px;
+  font-size: 0.98rem;
   white-space: nowrap;
+  color: var(--cr-ink);
 }
-#camp-rest-app .cr-drop i { color: var(--cr-ink-soft); }
-#camp-rest-app .cr-card.drag-over .cr-drop { border-style: solid; border-color: var(--cr-red); background: rgba(255, 200, 120, 0.35); }
+#camp-rest-app .cr-card.ok .cr-drop {
+  border: 1px solid #8f6d39;
+  background: linear-gradient(180deg, #f2e2bd, #dcc290);
+  box-shadow: inset 0 0 0 2px rgba(255, 246, 220, 0.55), 0 2px 4px rgba(50, 30, 10, 0.35);
+}
+#camp-rest-app .cr-card.drag-over .cr-drop { border-style: solid; border-color: var(--cr-red); background: rgba(255, 200, 120, 0.4); }
 
 #camp-rest-app .cr-penalty {
   align-self: stretch;
   min-height: 0;
   padding: 4px 6px;
   font-family: var(--cr-serif);
-  font-size: 0.9rem;
-  color: var(--cr-parch-hi);
+  font-size: 0.95rem;
+  color: #f6e6c6;
   background: linear-gradient(180deg, var(--cr-red-hi), var(--cr-red));
-  border: 1px solid #4a0c0a;
+  border: 1px solid #3e0805;
   border-radius: 3px;
 }
-#camp-rest-app .cr-penalty.waived { background: linear-gradient(180deg, #5d8f45, var(--cr-ok)); border-color: #1f3a15; }
+#camp-rest-app .cr-penalty.waived { background: linear-gradient(180deg, #5c8f43, var(--cr-ok)); border-color: #1d3812; }
 
 /* --- Fußzeile --- */
 #camp-rest-app .cr-footer {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 4px;
-  padding: 14px 4px 2px 170px;
-  border-top: 1px solid var(--cr-gold-lo);
-  min-height: 74px;
+  gap: 18px;
+  margin: 6px calc(-1 * var(--cr-side) + 26px) 0;
+  padding: 18px 40px 22px 330px;
+  min-height: 128px;
+  background: url("../assets/wood-footer.png") center / 100% 100%;
+  border-top: 2px solid #120b06;
+  box-shadow: inset 0 1px 0 var(--cr-gold-lo);
 }
 #camp-rest-app .cr-footer::before {
   content: "";
   position: absolute;
   left: 50%;
-  top: -5px;
-  width: 8px;
-  height: 8px;
-  background: var(--cr-gold);
-  border: 1px solid #2a1c0a;
+  top: -7px;
+  width: 11px;
+  height: 11px;
+  background: linear-gradient(135deg, var(--cr-gold-hi), var(--cr-gold-lo));
+  border: 1px solid #1a1006;
   transform: translateX(-50%) rotate(45deg);
 }
 #camp-rest-app .cr-footer-hint {
   flex: 1;
   text-align: center;
   font-style: italic;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #cbb68a;
+  font-size: 1.08rem;
+  line-height: 1.45;
+  color: #d9c497;
+  text-shadow: 0 1px 2px #000;
 }
-#camp-rest-app .cr-footer-buttons { display: flex; gap: 10px; flex: 0 0 auto; }
+#camp-rest-app .cr-footer-buttons { display: flex; gap: 12px; flex: 0 0 auto; }
 #camp-rest-app .cr-btn {
-  height: 52px;
+  --rivet: radial-gradient(circle, #b9a58a 0 2px, #4a3d30 3px, transparent 4px);
+  position: relative;
+  height: 74px;
   min-width: 140px;
-  padding: 0 20px;
+  padding: 0 26px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
   font-family: var(--cr-serif);
   font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--cr-parch-hi);
-  background: linear-gradient(180deg, #3a2a1c, #1a110a);
-  border: 1px solid var(--cr-gold-lo);
-  border-radius: 4px;
-  box-shadow: inset 0 1px 0 rgba(242, 215, 142, 0.15), 0 2px 6px rgba(0, 0, 0, 0.6);
+  font-size: 1.55rem;
+  border-radius: 3px;
   cursor: pointer;
+  background:
+    var(--rivet) left 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) left 4px bottom 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px bottom 4px / 10px 10px no-repeat,
+    linear-gradient(180deg, #3a2a1c, #1d130b);
+  color: var(--cr-text-light);
+  border: 2px solid #5a4a3a;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.6);
 }
-#camp-rest-app .cr-btn:hover:not(:disabled) { border-color: var(--cr-gold); color: #fff; }
-#camp-rest-app .cr-btn.cr-primary {
+#camp-rest-app .cr-btn.cr-start {
   min-width: 260px;
-  background: linear-gradient(180deg, #a8341c, #6a1a10);
-  border-color: var(--cr-gold);
-  box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.35), 0 0 0 1px #2a0705, 0 3px 10px rgba(0, 0, 0, 0.6);
+  background:
+    var(--rivet) left 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) left 4px bottom 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px bottom 4px / 10px 10px no-repeat,
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.06) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #8d2316, #561009);
+  color: #f6e2bb;
 }
-#camp-rest-app .cr-btn.cr-primary:hover:not(:disabled) { box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.35), 0 0 0 1px #2a0705, 0 0 16px rgba(255, 140, 50, 0.7); }
-#camp-rest-app .cr-btn:disabled,
-#camp-rest-app .cr-btn.cr-primary:disabled {
+#camp-rest-app .cr-btn:hover:not(:disabled) { filter: brightness(1.15); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 140, 50, 0.6); }
+#camp-rest-app .cr-btn.cr-start:disabled {
   cursor: not-allowed;
-  color: #6d5c45;
-  background: linear-gradient(180deg, #2a1f16, #1a120c);
-  border-color: #3e3021;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  filter: none;
+  color: #a5675a;
+  background:
+    var(--rivet) left 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px top 4px / 10px 10px no-repeat,
+    var(--rivet) left 4px bottom 4px / 10px 10px no-repeat,
+    var(--rivet) right 4px bottom 4px / 10px 10px no-repeat,
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #4a0f0b, #300806);
 }
 
 /* --- Schmale Fenster --- */
-@container (max-width: 900px) {
-  #camp-rest-app .cr-sketch.right { display: none; }
-  #camp-rest-app .cr-stores-body { padding-right: 70px; }
-}
-@container (max-width: 700px) {
+@container crwin (max-width: 1020px) {
   #camp-rest-app .cr-sketch { display: none; }
-  #camp-rest-app .cr-stores-body { padding: 14px 64px 14px 18px; }
-  #camp-rest-app .cr-summary { font-size: 1.1rem; }
-  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 4px; }
-  #camp-rest-app .cr-btn.cr-primary { min-width: 0; }
-  #camp-rest-app .cr-footer-buttons { align-self: stretch; justify-content: flex-end; }
+  #camp-rest-app .cr-stores { padding-right: 70px; flex-wrap: wrap; }
+}
+@container crwin (max-width: 860px) {
+  #camp-rest-app .cr-provisions { display: none; }
+  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 54px; }
+  #camp-rest-app .cr-btn.cr-start { min-width: 0; }
+  #camp-rest-app .cr-summary { font-size: 1.2rem; }
+  #camp-rest-app .window-title { font-size: 1.8rem; }
 }
 
 /* =====================================================================
