@@ -42,9 +42,12 @@
   background:
     url("../assets/wood.svg"),
     linear-gradient(180deg, #2b1c10 0%, #1d130a 60%, #150d07 100%);
-  border: 2px solid #070403;
-  border-radius: 4px;
-  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.8);
+  border: 3px solid #0a0503;
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px #6e5221,
+    0 0 0 3px #120a05,
+    0 10px 28px rgba(0, 0, 0, 0.75);
   overflow: hidden;
 }
 
@@ -58,6 +61,7 @@
   gap: 14px;
   background: url("../assets/wood-header.png") center / 100% 100%;
   border: none;
+  border-top: 2px solid #a07a36;
   border-bottom: 2px solid #120b06;
   box-shadow: 0 1px 0 var(--cr-gold-lo), 0 4px 10px rgba(0, 0, 0, 0.6);
   color: var(--cr-text-light);
@@ -96,23 +100,35 @@
   white-space: nowrap;
 }
 #camp-rest-app .window-header .header-control {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  color: var(--cr-gold-hi);
+  background: radial-gradient(circle at 40% 35%, #4a3523, #140c07 70%);
+  border: 1px solid var(--cr-gold);
+  border-radius: 50%;
+  z-index: 5;
+}
+#camp-rest-app .window-header .header-control + .header-control { margin-left: 6px; }
+#camp-rest-app .window-header .header-control[data-action="close"] {
   position: absolute;
   top: 7px;
   right: -20px;
   width: 56px;
   height: 56px;
   margin: 0;
-  padding: 0;
   border: none;
-  border-radius: 50%;
   font-size: 0;
   color: transparent;
   background: url("../assets/close.png") center / contain no-repeat;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
-  z-index: 5;
 }
 #camp-rest-app .window-header .header-control:hover { filter: brightness(1.25); box-shadow: 0 0 14px rgba(255, 170, 60, 0.6); }
-#camp-rest-app .window-header .header-control + .header-control { right: 40px; }
 
 /* --- Inhalt --- */
 #camp-rest-app .window-content {
@@ -134,11 +150,11 @@
   bottom: 0;
   width: 26px;
   background:
-    linear-gradient(90deg, #0b0604 0%, #3a2715 30%, #5a3d1f 50%, #2c1c0e 75%, #0b0604 100%);
-  box-shadow: inset 0 0 0 1px rgba(196, 154, 76, 0.25);
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 11px),
+    linear-gradient(90deg, #1a0f07 0%, #4a321a 35%, #5e4122 55%, #2e1d0e 100%);
 }
-#camp-rest-app .cr-post.left { left: 0; }
-#camp-rest-app .cr-post.right { right: 0; }
+#camp-rest-app .cr-post.left { left: 0; border-right: 2px solid #a07a36; box-shadow: 1px 0 0 #120a05, inset -1px 0 0 #e6c879; }
+#camp-rest-app .cr-post.right { right: 0; border-left: 2px solid #a07a36; box-shadow: -1px 0 0 #120a05, inset 1px 0 0 #e6c879; }
 #camp-rest-app .cr-curtain.left { left: 0; top: 8px; width: 155px; height: 584px; background-image: url("../assets/curtain-left.png"); }
 #camp-rest-app .cr-curtain.right { right: 0; top: 7px; width: 203px; height: 618px; background-image: url("../assets/curtain-right.png"); background-position: right top; }
 #camp-rest-app .cr-corner.tl { left: 2px; top: 6px; width: 44px; height: 70px; background-image: url("../assets/corner-tl.png"); }
@@ -174,14 +190,6 @@
   background: radial-gradient(circle, rgba(255, 175, 70, 0.4) 0%, rgba(255, 130, 30, 0.14) 40%, transparent 70%);
   mix-blend-mode: screen;
   animation: cr-flicker 2.6s infinite;
-}
-#camp-rest-app .cr-provisions {
-  left: 0;
-  bottom: 0;
-  width: 355px;
-  height: 266px;
-  background-image: url("../assets/provisions.png");
-  background-position: left bottom;
 }
 
 @keyframes cr-sway {
@@ -503,10 +511,13 @@
   align-items: center;
   gap: 18px;
   margin: 6px calc(-1 * var(--cr-side) + 26px) 0;
-  padding: 18px 40px 22px 330px;
+  padding: 18px 40px 22px 200px;
   min-height: 128px;
-  background: url("../assets/wood-footer.png") center / 100% 100%;
+  background:
+    url("../assets/provisions.png") left bottom / auto 128px no-repeat,
+    url("../assets/wood-footer.png") center / 100% 100%;
   border-top: 2px solid #120b06;
+  border-bottom: 2px solid #a07a36;
   box-shadow: inset 0 1px 0 var(--cr-gold-lo);
 }
 #camp-rest-app .cr-footer::before {
@@ -586,8 +597,7 @@
   #camp-rest-app .cr-stores { padding-right: 70px; flex-wrap: wrap; }
 }
 @container crwin (max-width: 860px) {
-  #camp-rest-app .cr-provisions { display: none; }
-  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 54px; }
+  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 54px; background: url("../assets/wood-footer.png") center / 100% 100%; }
   #camp-rest-app .cr-btn.cr-start { min-width: 0; }
   #camp-rest-app .cr-summary { font-size: 1.2rem; }
   #camp-rest-app .window-title { font-size: 1.8rem; }

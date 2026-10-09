@@ -17,7 +17,6 @@ export const DECO_HTML = `<div class="cr-deco" aria-hidden="true">
   <div class="cr-corner br"></div>
   <div class="cr-banner"></div>
   <div class="cr-lantern"><span class="cr-glow"></span></div>
-  <div class="cr-provisions"></div>
 </div>`;
 
 function card(m, vm) {
