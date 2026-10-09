@@ -7,6 +7,8 @@
 import { campView, DECO_HTML } from "./view.js";
 
 const MOD = "ascandir-rest-manager";
+/** Wird beim Veröffentlichen automatisch durch die Versionsnummer ersetzt. */
+const CODE_VERSION = "__VERSION__";
 const SOCKET = `module.${MOD}`;
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
 
@@ -741,7 +743,16 @@ async function migrateOldSettings() {
   if (moved) ui.notifications.info("Ascandir - Rest Manager: Einstellungen aus der alten Version übernommen.");
 }
 
+/** Warnen, wenn ein Client noch alte Moduldateien aus dem Zwischenspeicher lädt. */
+function checkStaleCache() {
+  const installed = game.modules.get(MOD)?.version;
+  if (!installed || CODE_VERSION.startsWith("__") || installed === CODE_VERSION) return;
+  ui.notifications.warn(`Ascandir - Rest Manager: Dieser Client nutzt noch alte Dateien (${CODE_VERSION} statt ${installed}). `
+    + "Bitte mit Strg+Shift+R bzw. Strg+F5 neu laden.", { permanent: true });
+}
+
 Hooks.once("ready", () => {
+  checkStaleCache();
   migrateOldSettings().catch((err) => console.warn(`${MOD} | Übernahme alter Einstellungen fehlgeschlagen`, err));
 
   game.socket.on(SOCKET, (payload) => {
