@@ -18,7 +18,7 @@ https://github.com/Ascandir/Ascandir-Rest-Manager/releases/latest/download/modul
    - **Shift** beim Ablegen = Anzahl wählen.
    - Mit dem **–**-Knopf nimmt man ein Stück wieder heraus.
 4. Versorgte Charaktere werden **grün mit Haken** angezeigt, unversorgte **rot**.
-5. **SL:** Bei unversorgten Charakteren kann die Strafe per Knopf **erlassen** werden. Dann **„Lange Rast durchführen“** – die Vorräte werden abgezogen, alle rasten, Unversorgte bekommen die Strafe.
+5. **SL:** Bei unversorgten Charakteren kann die Strafe per Knopf **erlassen** werden. Dann **„Rast starten“** – die Vorräte werden abgezogen, alle rasten, Unversorgte bekommen die Strafe.
 
 Spieler, die das Fenster geschlossen haben, öffnen es über **„Lager öffnen“** in der Akteure-Seitenleiste wieder.
 
