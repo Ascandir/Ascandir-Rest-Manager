@@ -10,10 +10,9 @@ const fmt = (n) => (Math.round(Number(n) * 10) / 10).toLocaleString("de-DE");
 
 /** Gemalte Verzierungen, die einmalig über das ganze Fenster gelegt werden. */
 export const DECO_HTML = `<div class="cr-deco" aria-hidden="true">
-  <div class="cr-post left"></div><div class="cr-post right"></div>
+  <div class="cr-frame"></div>
   <div class="cr-curtain left"></div>
   <div class="cr-curtain right"></div>
-  <div class="cr-corner tl"></div>
   <div class="cr-corner br"></div>
   <div class="cr-banner"></div>
   <div class="cr-lantern"><span class="cr-glow"></span></div>
@@ -34,10 +33,10 @@ function card(m, vm) {
   return `<section class="cr-card ${m.ok ? "ok" : "missing"}" data-actor-id="${esc(m.id)}">
     <span class="cr-check ${m.ok ? "on" : ""}" data-tooltip="${m.ok ? "Versorgt" : "Noch nicht versorgt"}"></span>
     <div class="cr-portrait"><img src="${esc(m.img)}" alt=""></div>
-    <div class="cr-plate">${esc(m.name)}</div>
+    <div class="cr-plate"><span>${esc(m.name)}</span></div>
     <div class="cr-count"><span class="cr-bread"></span><b>${fmt(m.have)}/${fmt(vm.required)}</b></div>
     ${pledges ? `<ul class="cr-pledges">${pledges}</ul>` : ""}
-    <div class="cr-drop"><span class="cr-sack"></span>Vorräte hineinziehen</div>
+    <div class="cr-drop"><span class="cr-sack"></span><span>Vorräte hineinziehen</span></div>
     ${penalty}
   </section>`;
 }
@@ -63,26 +62,28 @@ export function campView(vm) {
         </div>`).join("");
 
   const storesText = vm.isGM
-    ? `<h3>Lagerübersicht</h3><p>Spieler ziehen ihre Vorräte auf die Karten. Unversorgten kannst du die Strafe erlassen.</p>`
+    ? `<h3>Lagerübersicht</h3><p>Spieler ziehen ihre Vorräte auf die Karten.</p>`
     : `<h3>Deine Vorräte</h3><p>${vm.supplies.length ? "Rationen und Lagergüter im Inventar." : "Keine Rationen oder Lagervorräte im Inventar."}</p>`;
 
   const footer = vm.isGM
     ? `<div class="cr-footer-hint">${allDone
-        ? "Alle sind versorgt – das Lager ist bereit."
+        ? "Alle sind versorgt –<br>das Lager ist bereit."
         : "Noch nicht alle sind versorgt.<br>Unversorgte erhalten die eingestellte Strafe."}</div>
        <div class="cr-footer-buttons">
-         <button type="button" class="cr-btn cr-cancel" data-action="cancel">Abbrechen</button>
-         <button type="button" class="cr-btn cr-start" data-action="finish"><span class="cr-campfire"></span>Rast starten</button>
+         <button type="button" class="cr-btn cr-cancel" data-action="cancel"><span>Abbrechen</span></button>
+         <button type="button" class="cr-btn cr-start" data-action="finish"><span class="cr-campfire"></span><span>Rast starten</span></button>
        </div>`
-    : `<div class="cr-footer-hint">Der Spielleiter startet die Rast, sobald alle benötigten Tokens ausgewählt und versorgt sind.<br>Shift beim Ablegen = Anzahl wählen.</div>
+    : `<div class="cr-footer-hint">Der Spielleiter startet die Rast, sobald alle benötigten<br>Tokens ausgewählt und versorgt sind.<br>Shift beim Ablegen = Anzahl wählen.</div>
        <div class="cr-footer-buttons">
          <button type="button" class="cr-btn cr-start" disabled data-tooltip="Nur der Spielleiter kann die Rast starten">
-           <span class="cr-campfire"></span>Rast starten</button>
+           <span class="cr-campfire"></span><span>Rast starten</span></button>
        </div>`;
 
   return `
-    <div class="cr-summary"><span class="cr-flame"></span>
-      <span><em>${done}</em> <b>von ${total} versorgt</b><span class="cr-dot">·</span><b>Benötigt pro Person: ${fmt(vm.required)}</b></span>
+    <div class="cr-summary">
+      <span class="cr-dia top"></span><span class="cr-dia bottom"></span>
+      <span class="cr-flame"></span>
+      <span class="cr-summary-text"><em>${done}</em> <b>von ${total} versorgt</b><span class="cr-dot">·</span><b>Benötigt pro Person: ${fmt(vm.required)}</b></span>
     </div>
     <section class="cr-stores">
       <div class="cr-stores-head"><span class="cr-sack big"></span><div>${storesText}</div></div>
@@ -94,5 +95,5 @@ export function campView(vm) {
       <span class="cr-bar-count">Ausgewählt: ${done} / ${total}</span>
     </div>
     <div class="cr-members">${vm.members.map((m) => card(m, vm)).join("")}</div>
-    <footer class="cr-footer"><div class="cr-provisions" aria-hidden="true"></div>${footer}</footer>`;
+    <footer class="cr-footer"><span class="cr-dia footer"></span><div class="cr-provisions" aria-hidden="true"></div>${footer}</footer>`;
 }
