@@ -43,12 +43,12 @@
   color: var(--cr-ink);
   font-family: var(--cr-serif);
   font-variant-numeric: lining-nums;
-  background:
-    url("../assets/wood.svg"),
-    linear-gradient(180deg, #24170d 0%, #1a1009 60%, #120b06 100%);
+  /* Kein eigener Fensterrand: die gemalte Rahmenform ist die Fensterkante */
+  background: none;
   border: none;
   border-radius: 0;
-  box-shadow: 0 0 0 1px #000, 0 12px 34px rgba(0, 0, 0, 0.8);
+  box-shadow: none;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.65));
   overflow: hidden;
 }
 
@@ -124,11 +124,18 @@
 
 /* --- Inhalt --- */
 #camp-rest-app .window-content {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
   padding: 0 var(--cr-post) var(--cr-beam);
-  background: none;
+  /* Holzgrund nur zwischen den Pfosten, damit außen nichts übersteht */
+  background:
+    url("../assets/wood.svg") 0 0 / 100% 420px repeat-y,
+    linear-gradient(180deg, #24170d 0%, #1a1009 60%, #120b06 100%);
+  background-clip: content-box;
+  background-origin: content-box;
   color: var(--cr-ink);
   overflow: hidden auto;
 }
@@ -147,8 +154,8 @@
   border-width: 0 var(--cr-post) var(--cr-beam) var(--cr-post);
   border-image: url("../assets/ui/frame.png") 0 45 48 44 / 0 var(--cr-post) var(--cr-beam) var(--cr-post) round;
 }
-#camp-rest-app .cr-curtain.left { left: 0; top: -1.5px; width: 154px; height: 582px; background-image: url("../assets/curtain-left.png"); }
-#camp-rest-app .cr-curtain.right { right: 0; top: -3px; width: 202px; height: 615px; background-image: url("../assets/curtain-right.png"); }
+#camp-rest-app .cr-curtain.left { left: 0; top: -2.2px; width: 160.9px; height: 582.3px; background-image: url("../assets/curtain-left.png"); }
+#camp-rest-app .cr-curtain.right { right: 0; top: -3px; width: 206.6px; height: 620px; background-image: url("../assets/curtain-right.png"); }
 #camp-rest-app .cr-corner.br { right: 0; bottom: 0; width: 79px; height: 82px; background-image: url("../assets/corner-br.png"); }
 #camp-rest-app .cr-banner { left: 42.8px; top: -4.5px; width: 85.6px; height: 168.3px; background-image: url("../assets/banner.png"); }
 #camp-rest-app .cr-lantern { right: 22.9px; top: 32.4px; width: 69.4px; height: 190.4px; background-image: url("../assets/lantern.png"); }
@@ -286,6 +293,8 @@
 
 /* --- Karten --- */
 #camp-rest-app .cr-members {
+  flex: 1 1 auto;                 /* freier Platz geht in den Kartenbereich, nicht unter die Fußzeile */
+  align-content: start;
   display: grid;
   grid-template-columns: repeat(auto-fill, 192px);
   justify-content: start;
