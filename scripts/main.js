@@ -17,21 +17,6 @@ const SOCKET = `module.${MOD}`;
 
 const ASSET_VERSION = CODE_VERSION.startsWith("__") ? String(Date.now()) : CODE_VERSION;
 
-(function loadStylesheet() {
-  if (document.querySelector("link[data-camp-rest]")) return;
-  // Adresse relativ zu dieser Datei bilden (funktioniert auch hinter Proxys / Pfad-Präfixen)
-  const href = new URL(`../styles/camp.css?v=${ASSET_VERSION}`, import.meta.url).href;
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = href;
-  link.dataset.campRest = ASSET_VERSION;
-  link.addEventListener("error", () => {
-    console.error(`${MOD} | Stylesheet konnte nicht geladen werden: ${href}`);
-    Hooks.once("ready", () => ui.notifications.error(`Ascandir - Rest Manager: Design-Datei nicht gefunden (${href}).`, { permanent: true }));
-  });
-  document.head.append(link);
-})();
-
 let viewModule = null;
 const loadView = () => (viewModule ??= import(`./view.js?v=${ASSET_VERSION}`));
 loadView();
