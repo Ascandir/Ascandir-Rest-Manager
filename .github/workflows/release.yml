@@ -49,7 +49,7 @@ jobs:
           mv tmp.json module.json
 
       - name: Versionsnummer in den Code schreiben
-        run: sed -i "s/__VERSION__/${{ steps.v.outputs.version }}/" scripts/main.js
+        run: sed -i "s/__VERSION__/${{ steps.v.outputs.version }}/g" scripts/main.js styles/camp.css
 
       - name: Modul packen
         run: zip -r module.zip module.json scripts styles assets fonts README.md

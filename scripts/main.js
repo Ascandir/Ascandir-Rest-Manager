@@ -70,8 +70,8 @@ function supplyValue(item) {
 /** Gemaltes Symbol für Rationen/Lagervorräte, sonst das Bild des Gegenstands. */
 function chipImage(item) {
   const n = norm(item.name);
-  if (/ration|proviant|essen|food/.test(n)) return `modules/${MOD}/assets/icon-bread.png`;
-  if (/camp|lager|vorrat|supplies/.test(n)) return `modules/${MOD}/assets/icon-crate.png`;
+  if (/ration|proviant|essen|food/.test(n)) return `modules/${MOD}/assets/icon-bread.png?v=${CODE_VERSION}`;
+  if (/camp|lager|vorrat|supplies/.test(n)) return `modules/${MOD}/assets/icon-crate.png?v=${CODE_VERSION}`;
   return item.img;
 }
 
