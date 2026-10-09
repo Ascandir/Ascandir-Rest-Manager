@@ -34,7 +34,7 @@ function card(m, vm) {
     <span class="cr-check ${m.ok ? "on" : ""}" data-tooltip="${m.ok ? "Versorgt" : "Noch nicht versorgt"}"></span>
     <div class="cr-portrait"><img src="${esc(m.img)}" alt=""></div>
     <div class="cr-plate"><span>${esc(m.name)}</span></div>
-    <div class="cr-count"><span class="cr-bread"></span><b>${fmt(m.have)}/${fmt(vm.required)}</b></div>
+    <div class="cr-count" data-tooltip="Größe: ${esc(m.size)} · benötigt ${fmt(m.required)}"><span class="cr-bread"></span><b>${fmt(m.have)}/${fmt(m.required)}</b></div>
     ${pledges ? `<ul class="cr-pledges">${pledges}</ul>` : ""}
     <div class="cr-drop"><span class="cr-sack"></span><span>Vorräte hineinziehen</span></div>
     ${penalty}
@@ -44,8 +44,8 @@ function card(m, vm) {
 /**
  * @param {object} vm
  * @param {boolean} vm.isGM
- * @param {number} vm.required
- * @param {Array} vm.members   {id,name,img,have,ok,waived,pledges:[{id,img,itemName,qty,fromName,canRemove}]}
+ * @param {number} vm.required  Gesamtbedarf aller Teilnehmer
+ * @param {Array} vm.members   {id,name,img,have,required,size,ok,waived,pledges:[{id,img,itemName,qty,fromName,canRemove}]}
  * @param {Array} vm.supplies  {uuid,img,name,left,owner}
  */
 export function campView(vm) {
@@ -83,7 +83,7 @@ export function campView(vm) {
     <div class="cr-summary">
       <span class="cr-dia top"></span><span class="cr-dia bottom"></span>
       <span class="cr-flame"></span>
-      <span class="cr-summary-text"><em>${done}</em> <b>von ${total} versorgt</b><span class="cr-dot">·</span><b>Benötigt pro Person: ${fmt(vm.required)}</b></span>
+      <span class="cr-summary-text"><em>${done}</em> <b>von ${total} versorgt</b><span class="cr-dot">·</span><b>Benötigt gesamt: ${fmt(vm.required)}</b></span>
     </div>
     <section class="cr-stores">
       <div class="cr-stores-head"><span class="cr-sack big"></span><div>${storesText}</div></div>

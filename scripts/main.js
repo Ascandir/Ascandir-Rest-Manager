@@ -26,8 +26,13 @@ const { ApplicationV2, DialogV2 } = foundry.applications.api;
 /*  Standardwerte                               */
 /* -------------------------------------------- */
 
+/** dnd5e-Kreaturengrößen in Reihenfolge. */
+const SIZES = ["tiny", "sm", "med", "lg", "huge", "grg"];
+const SIZE_FALLBACK = { tiny: "Winzig", sm: "Klein", med: "Mittelgroß", lg: "Groß", huge: "Riesig", grg: "Gigantisch" };
+
 const DEFAULT_SUPPLIES = {
-  required: 1,          // benötigte Vorrats-Punkte pro Charakter
+  required: 1,          // alter Einzelwert (nur noch Rückfall, falls keine Größen gespeichert sind)
+  bySize: { tiny: 1, sm: 1, med: 1, lg: 1, huge: 1, grg: 1 },  // benötigte Vorrats-Punkte je Kreaturengröße
   partial: true,        // "Rations (1 day)" zählt auch für den Eintrag "Rations"
   deleteEmpty: false,   // Gegenstand löschen, wenn Menge 0 erreicht
   entries: [
@@ -57,8 +62,16 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
 const norm = (s) => String(s ?? "").trim().toLowerCase();
 const getDoc = (uuid) => (foundry.utils.fromUuid ?? globalThis.fromUuid)(uuid);
 
-const getSupplies = () => foundry.utils.mergeObject(foundry.utils.deepClone(DEFAULT_SUPPLIES),
-  game.settings.get(MOD, "supplyConfig") ?? {}, { inplace: false });
+function getSupplies() {
+  const stored = game.settings.get(MOD, "supplyConfig") ?? {};
+  const cfg = foundry.utils.mergeObject(foundry.utils.deepClone(DEFAULT_SUPPLIES), stored, { inplace: false });
+  // Ältere Einstellungen kennen nur einen Wert für alle – den für jede Größe übernehmen
+  if (!stored.bySize) {
+    const r = Number(cfg.required) || 0;
+    cfg.bySize = Object.fromEntries(SIZES.map((k) => [k, r]));
+  }
+  return cfg;
+}
 const getPenalty = () => foundry.utils.mergeObject(foundry.utils.deepClone(DEFAULT_PENALTY),
   game.settings.get(MOD, "penaltyConfig") ?? {}, { inplace: false });
 const getState = () => foundry.utils.deepClone(game.settings.get(MOD, "state") ?? { active: false });
@@ -94,6 +107,25 @@ function suppliedFor(state, actorId) {
 /** Wie viele Stück eines Gegenstands sind schon verplant? */
 function pledgedOf(state, itemUuid) {
   return (state.pledges ?? []).filter((p) => p.itemUuid === itemUuid).reduce((s, p) => s + p.qty, 0);
+}
+
+/** Anzeigename einer Kreaturengröße (aus dnd5e, sonst deutsch). */
+function sizeLabel(key) {
+  const label = CONFIG.DND5E?.actorSizes?.[key]?.label;
+  return (label && game.i18n.localize(label)) || SIZE_FALLBACK[key] || key;
+}
+
+/** Größe eines Akteurs (dnd5e: system.traits.size), Standard "med". */
+function sizeOf(actor) {
+  const k = actor?.system?.traits?.size;
+  return SIZES.includes(k) ? k : "med";
+}
+
+/** Wie viele Vorrats-Punkte braucht dieser Akteur für eine lange Rast? */
+function requiredFor(actorOrId, cfg = getSupplies()) {
+  const actor = typeof actorOrId === "string" ? game.actors.get(actorOrId) : actorOrId;
+  const v = cfg.bySize?.[sizeOf(actor)];
+  return Math.max(0, Number(v ?? cfg.required) || 0);
 }
 
 function maxExhaustion() {
@@ -222,9 +254,11 @@ async function startRequest() {
     .map((a) => ({ id: a.id, name: a.name, img: a.img }));
 
   await setState({ active: true, id: foundry.utils.randomID(), participants, pledges: [], noPenalty: {}, rev: 1 });
+  const cfg = getSupplies();
+  const needs = participants.map((p) => `<li>${esc(p.name)}: <strong>${requiredFor(p.id, cfg)}</strong></li>`).join("");
   await ChatMessage.create({
     content: `<div class="camp-rest-chat"><h3><i class="fa-solid fa-campground"></i> Lange Rast angefragt</h3>
-      <p>Legt eure Rationen und Lagervorräte ins Lager! Benötigt pro Person: <strong>${getSupplies().required}</strong>.</p></div>`
+      <p>Legt eure Rationen und Lagervorräte ins Lager! Bedarf je nach Größe:</p><ul>${needs}</ul></div>`
   });
 }
 
@@ -242,17 +276,18 @@ async function cancelRequest() {
 async function finishRest() {
   const state = getState();
   if (!state.active) return;
-  const required = Number(getSupplies().required) || 0;
+  const cfg = getSupplies();
   const penalty = getPenalty();
 
   const rows = state.participants.map((p) => {
     const have = suppliedFor(state, p.id);
+    const required = requiredFor(p.id, cfg);
     const short = have < required;
     const punished = short && !state.noPenalty?.[p.id];
-    return { ...p, have, short, punished };
+    return { ...p, have, required, short, punished };
   });
 
-  const list = rows.map((r) => `<li>${esc(r.name)}: ${r.have}/${required}
+  const list = rows.map((r) => `<li>${esc(r.name)}: ${r.have}/${r.required}
     ${r.punished ? "<strong>– Strafe</strong>" : r.short ? "– unterversorgt, Strafe erlassen" : "✔"}</li>`).join("");
   const ok = await DialogV2.confirm({
     window: { title: "Lange Rast durchführen" },
@@ -413,17 +448,20 @@ class CampRestApp extends ApplicationV2 {
 
   async _renderHTML() {
     const state = getState();
-    const required = Number(getSupplies().required) || 0;
+    const cfg = getSupplies();
     const isGM = game.user.isGM;
 
     const members = (state.participants ?? []).map((p) => {
       const actor = game.actors.get(p.id);
       const have = suppliedFor(state, p.id);
+      const required = requiredFor(actor ?? p.id, cfg);
       return {
         id: p.id,
         name: actor?.name ?? p.name,
         img: actor?.img ?? p.img,
         have,
+        required,
+        size: sizeLabel(sizeOf(actor)),
         ok: have >= required,
         waived: !!state.noPenalty?.[p.id],
         pledges: state.pledges.filter((x) => x.toActorId === p.id).map((x) => ({
@@ -441,6 +479,7 @@ class CampRestApp extends ApplicationV2 {
 
     const view = await loadView();
     this.viewMod = view;
+    const required = members.reduce((sum, m) => sum + m.required, 0);
     return view.campView({ isGM, required, members, supplies });
   }
 
@@ -533,11 +572,6 @@ class SupplyConfigApp extends ApplicationV2 {
       <fieldset>
         <legend>Allgemein</legend>
         <div class="form-group">
-          <label for="cr-required">Benötigte Punkte pro Charakter</label>
-          <div class="form-fields"><input type="number" id="cr-required" name="required" value="${Number(c.required) || 0}" min="0" step="0.5"></div>
-          <p class="hint">So viele Vorrats-Punkte braucht jeder Teilnehmer für eine lange Rast.</p>
-        </div>
-        <div class="form-group">
           <label for="cr-partial">Teilübereinstimmung erlauben</label>
           <div class="form-fields"><input type="checkbox" id="cr-partial" name="partial" ${c.partial ? "checked" : ""}></div>
           <p class="hint">„Rations (1 day)“ zählt dann auch für den Eintrag „Rations“.</p>
@@ -547,6 +581,16 @@ class SupplyConfigApp extends ApplicationV2 {
           <div class="form-fields"><input type="checkbox" id="cr-delete" name="deleteEmpty" ${c.deleteEmpty ? "checked" : ""}></div>
           <p class="hint">Sonst bleibt der Gegenstand mit Menge 0 im Inventar.</p>
         </div>
+      </fieldset>
+      <fieldset>
+        <legend>Bedarf nach Kreaturengröße</legend>
+        <p class="hint">So viele Vorrats-Punkte braucht ein Teilnehmer dieser Größe für eine lange Rast.
+          Die Größe kommt aus dem Bogen (Merkmale → Größe).</p>
+        ${SIZES.map((k) => `
+        <div class="form-group">
+          <label for="cr-size-${k}">${esc(sizeLabel(k))}</label>
+          <div class="form-fields"><input type="number" id="cr-size-${k}" name="size.${k}" value="${Number(c.bySize?.[k]) || 0}" min="0" step="0.5"></div>
+        </div>`).join("")}
       </fieldset>
       <fieldset class="cr-entries">
         <legend>Gegenstände</legend>
@@ -591,8 +635,11 @@ class SupplyConfigApp extends ApplicationV2 {
       const value = Number(f.querySelector(`[name="value.${i}"]`)?.value) || 0;
       entries.push({ name, value });
     }
+    const bySize = Object.fromEntries(SIZES.map((k) =>
+      [k, Math.max(0, Number(f.querySelector(`[name="size.${k}"]`)?.value) || 0)]));
     this.cfg = {
-      required: Number(f.querySelector('[name="required"]')?.value) || 0,
+      required: bySize.med,
+      bySize,
       partial: !!f.querySelector('[name="partial"]')?.checked,
       deleteEmpty: !!f.querySelector('[name="deleteEmpty"]')?.checked,
       entries
@@ -718,7 +765,7 @@ Hooks.once("init", () => {
   game.settings.registerMenu(MOD, "supplyMenu", {
     name: "Rationen & Lagervorräte",
     label: "Vorräte festlegen",
-    hint: "Was zählt als Ration oder Lagervorrat, und wie viel braucht jeder Charakter für eine lange Rast?",
+    hint: "Was zählt als Ration oder Lagervorrat, und wie viel braucht eine Kreatur je nach Größe (winzig bis riesig) für eine lange Rast?",
     icon: "fa-solid fa-drumstick-bite",
     type: SupplyConfigApp,
     restricted: true

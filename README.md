@@ -26,7 +26,7 @@ Spieler, die das Fenster geschlossen haben, öffnen es über **„Lager öffnen�
 
 *Spieleinstellungen → Moduleinstellungen → Ascandir - Rest Manager*
 
-- **Vorräte festlegen:** Welche Gegenstände zählen (Name oder Identifier), wie viele Punkte ein Stück wert ist, wie viele Punkte jeder Charakter braucht. Gegenstände lassen sich hineinziehen.
+- **Vorräte festlegen:** Welche Gegenstände zählen (Name oder Identifier), wie viele Punkte ein Stück wert ist und wie viele Punkte eine Kreatur **je nach Größe** braucht (Winzig, Klein, Mittelgroß, Groß, Riesig, Gigantisch). Die Größe kommt aus dem Bogen. Gegenstände lassen sich hineinziehen.
 - **Strafe festlegen:** Keine Rast · keine Trefferpunkte · keine Trefferwürfel · keine Zauberplätze · zusätzliche Erschöpfung · Zustand „Unterernährt“ · eigene Chatnachricht.
 
 ## Makro
