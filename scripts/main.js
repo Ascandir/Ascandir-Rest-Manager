@@ -4,12 +4,32 @@
  * Foundry VTT v14 · dnd5e 6.x
  */
 
-import { campView, DECO_HTML } from "./view.js";
-
 const MOD = "ascandir-rest-manager";
 /** Wird beim Veröffentlichen automatisch durch die Versionsnummer ersetzt. */
 const CODE_VERSION = "__VERSION__";
 const SOCKET = `module.${MOD}`;
+
+/* -------------------------------------------- */
+/*  Dateien versioniert laden                   */
+/*  (sonst liefern Browser oder Proxys nach     */
+/*  einem Update noch alte Fassungen aus)       */
+/* -------------------------------------------- */
+
+const ASSET_VERSION = CODE_VERSION.startsWith("__") ? String(Date.now()) : CODE_VERSION;
+
+(function loadStylesheet() {
+  const href = `modules/${MOD}/styles/camp.css?v=${ASSET_VERSION}`;
+  if (document.querySelector(`link[data-camp-rest]`)) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = href;
+  link.dataset.campRest = ASSET_VERSION;
+  document.head.append(link);
+})();
+
+let viewModule = null;
+const loadView = () => (viewModule ??= import(`./view.js?v=${ASSET_VERSION}`));
+loadView();
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
 
 /* -------------------------------------------- */
@@ -429,7 +449,9 @@ class CampRestApp extends ApplicationV2 {
         left: (Number(i.system.quantity) || 0) - pledgedOf(state, i.uuid)
       })));
 
-    return campView({ isGM, required, members, supplies });
+    const view = await loadView();
+    this.viewMod = view;
+    return view.campView({ isGM, required, members, supplies });
   }
 
   _replaceHTML(result, content) {
@@ -438,7 +460,7 @@ class CampRestApp extends ApplicationV2 {
 
   _onRender() {
     const el = this.element;
-    if (!el.querySelector(":scope > .cr-deco")) el.insertAdjacentHTML("beforeend", DECO_HTML);
+    if (!el.querySelector(":scope > .cr-deco") && this.viewMod) el.insertAdjacentHTML("beforeend", this.viewMod.DECO_HTML);
 
     el.querySelectorAll(".cr-supply[draggable='true']").forEach((s) => {
       s.addEventListener("dragstart", (ev) => {
