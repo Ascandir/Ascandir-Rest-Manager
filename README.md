@@ -1,6 +1,6 @@
 # Ascandir - Rest Manager
 
-Überarbeitete lange Rast für **Foundry VTT v14** und **D&D 5e 5.3**.
+Überarbeitete lange Rast für **Foundry VTT v14 (ausgelegt auf 14.368)** und **D&D 5e 6.0 (ausgelegt auf 6.0.6)**.
 
 ## Installation
 
@@ -27,7 +27,7 @@ Spieler, die das Fenster geschlossen haben, öffnen es über **„Lager öffnen�
 *Spieleinstellungen → Moduleinstellungen → Ascandir - Rest Manager*
 
 - **Vorräte festlegen:** Welche Gegenstände zählen (Name oder Identifier), wie viele Punkte ein Stück wert ist, wie viele Punkte jeder Charakter braucht. Gegenstände lassen sich hineinziehen.
-- **Strafe festlegen:** Keine Rast · keine Trefferpunkte · keine Trefferwürfel · keine Zauberplätze · zusätzliche Erschöpfung · eigene Chatnachricht.
+- **Strafe festlegen:** Keine Rast · keine Trefferpunkte · keine Trefferwürfel · keine Zauberplätze · zusätzliche Erschöpfung · Zustand „Unterernährt“ · eigene Chatnachricht.
 
 ## Makro
 

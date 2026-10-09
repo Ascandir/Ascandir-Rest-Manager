@@ -1,7 +1,7 @@
 /**
  * Ascandir - Rest Manager
  * Gemeinsame lange Rast mit Rationen / Lagervorräten für D&D 5e.
- * Foundry VTT v13/v14 · dnd5e 5.x
+ * Foundry VTT v14 · dnd5e 6.x
  */
 
 import { campView, DECO_HTML } from "./view.js";
@@ -32,6 +32,7 @@ const DEFAULT_PENALTY = {
   noHD: true,           // keine Trefferwürfel zurück
   noSlots: false,       // keine Zauberplätze zurück
   exhaustion: 1,        // zusätzliche Erschöpfungsstufen
+  malnutrition: false,  // Zustand "Unterernährt" setzen (dnd5e)
   message: "{name} hatte nicht genug Vorräte und verbringt eine hungrige, unruhige Nacht."
 };
 
@@ -277,54 +278,81 @@ async function finishRest() {
   }
 }
 
-/** Lange Rast mit Strafe: vorher Werte merken, rasten, dann gewählte Werte zurücksetzen. */
+/** Strafen, die beim nächsten Abschluss einer langen Rast angewendet werden (Akteur-ID -> Strafe). */
+const pendingPenalty = new Map();
+
+/**
+ * dnd5e berechnet zuerst alle Erholungen und ruft dann "dnd5e.preRestCompleted" auf,
+ * bevor irgendetwas gespeichert wird. Hier streichen wir die Erholungen, die die Strafe verbietet.
+ */
+function applyPenaltyToRest(actor, result) {
+  const pen = pendingPenalty.get(actor.id);
+  if (!pen || result?.type !== "long") return;
+  const { flattenObject } = foundry.utils;
+
+  const data = flattenObject(result.updateData ?? {});
+  const drop = (re) => { for (const k of Object.keys(data)) if (re.test(k)) delete data[k]; };
+
+  if (pen.noHP) {
+    drop(/^system\.attributes\.hp\.value$/);
+    if (result.deltas) result.deltas.hitPoints = 0;
+  }
+  if (pen.noHD) {
+    drop(/^system\.attributes\.hd\.spent$/);           // Begleiter / NSC
+    result.updateItems = (result.updateItems ?? []).map((u) => {
+      const f = flattenObject(u);
+      delete f["system.hd.spent"];                     // Klassen von Spielercharakteren
+      return f;
+    }).filter((u) => Object.keys(u).some((k) => k !== "_id"));
+    if (result.deltas) result.deltas.hitDice = 0;
+  }
+  if (pen.noSlots) drop(/^system\.spells\.[^.]+\.value$/);
+
+  const levels = Math.max(0, Math.floor(Number(pen.exhaustion) || 0));
+  if (levels) {
+    const base = data["system.attributes.exhaustion"] ?? (Number(actor.system.attributes?.exhaustion) || 0);
+    data["system.attributes.exhaustion"] = Math.min(maxExhaustion(), Number(base) + levels);
+  }
+  result.updateData = data;
+}
+
+function penaltyEffects(pen) {
+  const fx = [];
+  const levels = Math.max(0, Math.floor(Number(pen.exhaustion) || 0));
+  if (pen.denyRest) fx.push("erhält <strong>keine</strong> lange Rast");
+  else {
+    if (pen.noHP) fx.push("keine Trefferpunkte zurück");
+    if (pen.noHD) fx.push("keine Trefferwürfel zurück");
+    if (pen.noSlots) fx.push("keine Zauberplätze zurück");
+  }
+  if (levels) fx.push(`+${levels} Erschöpfung`);
+  if (pen.malnutrition) fx.push("Zustand: Unterernährt");
+  return fx;
+}
+
+/** Lange Rast mit Strafe. */
 async function restWithPenalty(actor, pen) {
-  const effects = [];
-  const exLevels = Math.max(0, Math.floor(Number(pen.exhaustion) || 0));
-
   if (pen.denyRest) {
-    effects.push("erhält <strong>keine</strong> lange Rast");
-    if (exLevels) {
+    const levels = Math.max(0, Math.floor(Number(pen.exhaustion) || 0));
+    if (levels) {
       const cur = Number(actor.system.attributes?.exhaustion) || 0;
-      await actor.update({ "system.attributes.exhaustion": Math.min(maxExhaustion(), cur + exLevels) });
-      effects.push(`+${exLevels} Erschöpfung`);
+      await actor.update({ "system.attributes.exhaustion": Math.min(maxExhaustion(), cur + levels) });
     }
-    return postPenalty(actor, pen, effects);
+  } else {
+    pendingPenalty.set(actor.id, pen);
+    try {
+      await actor.longRest({ dialog: false, chat: true });
+    } finally {
+      pendingPenalty.delete(actor.id);
+    }
   }
-
-  // Momentaufnahme vor der Rast
-  const src = actor._source.system;
-  const snap = {
-    hp: src.attributes?.hp?.value,
-    spells: Object.fromEntries(Object.entries(src.spells ?? {})
-      .filter(([, v]) => typeof v?.value === "number").map(([k, v]) => [k, v.value])),
-    hd: actor.itemTypes.class.map((c) => (c._source.system.hd?.spent !== undefined)
-      ? { _id: c.id, "system.hd.spent": c._source.system.hd.spent }
-      : { _id: c.id, "system.hitDiceUsed": c._source.system.hitDiceUsed ?? 0 })
-  };
-
-  await actor.longRest({ dialog: false, chat: true });
-
-  const update = {};
-  if (pen.noHP && typeof snap.hp === "number") {
-    update["system.attributes.hp.value"] = snap.hp;
-    effects.push("keine Trefferpunkte zurück");
+  // Unterernährung (dnd5e): verhindert, dass die nächste Rast Erschöpfung abbaut
+  const statuses = CONFIG.statusEffects;
+  const hasMalnutrition = Array.isArray(statuses) ? statuses.some((e) => e.id === "malnutrition") : !!statuses?.malnutrition;
+  if (pen.malnutrition && hasMalnutrition) {
+    await actor.toggleStatusEffect("malnutrition", { active: true });
   }
-  if (pen.noSlots) {
-    for (const [k, v] of Object.entries(snap.spells)) update[`system.spells.${k}.value`] = v;
-    effects.push("keine Zauberplätze zurück");
-  }
-  if (exLevels) {
-    const cur = Number(actor.system.attributes?.exhaustion) || 0;
-    update["system.attributes.exhaustion"] = Math.min(maxExhaustion(), cur + exLevels);
-    effects.push(`+${exLevels} Erschöpfung`);
-  }
-  if (Object.keys(update).length) await actor.update(update);
-  if (pen.noHD && snap.hd.length) {
-    await actor.updateEmbeddedDocuments("Item", snap.hd);
-    effects.push("keine Trefferwürfel zurück");
-  }
-  return postPenalty(actor, pen, effects);
+  return postPenalty(actor, pen, penaltyEffects(pen));
 }
 
 function postPenalty(actor, pen, effects) {
@@ -573,6 +601,7 @@ class PenaltyConfigApp extends ApplicationV2 {
       ${box("noHP", "Keine Trefferpunkte zurück")}
       ${box("noHD", "Keine Trefferwürfel zurück")}
       ${box("noSlots", "Keine Zauberplätze zurück", "Gilt auch für Paktmagie-Plätze.")}
+      ${box("malnutrition", "Zustand „Unterernährt“ setzen", "Zustand aus dnd5e: Solange er besteht, baut eine lange Rast keine Erschöpfung ab. Entfernen musst du ihn selbst.")}
       <div class="form-group"><label>Zusätzliche Erschöpfungsstufen</label>
         <input type="number" name="exhaustion" value="${Number(p.exhaustion) || 0}" min="0" max="6" step="1">
         <p class="hint">Wird nach der Rast addiert (die normale Rast senkt Erschöpfung vorher um 1).</p></div>
@@ -593,6 +622,7 @@ class PenaltyConfigApp extends ApplicationV2 {
       noHP: get("noHP").checked,
       noHD: get("noHD").checked,
       noSlots: get("noSlots").checked,
+      malnutrition: get("malnutrition").checked,
       exhaustion: Math.max(0, Math.floor(Number(get("exhaustion").value) || 0)),
       message: get("message").value
     });
@@ -685,6 +715,11 @@ Hooks.once("ready", () => {
     CampRestApp.lastRequestId = state.id;
     CampRestApp.show();
   }
+});
+
+Hooks.on("dnd5e.preRestCompleted", (actor, result) => {
+  try { applyPenaltyToRest(actor, result); }
+  catch (err) { console.error(`${MOD} | Strafe konnte nicht angewendet werden`, err); }
 });
 
 // Knopf in der Akteure-Seitenleiste
