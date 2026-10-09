@@ -489,8 +489,13 @@ class SupplyConfigApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "camp-rest-supplies",
     tag: "form",
-    classes: ["camp-rest", "camp-rest-config"],
-    window: { title: "Rest Manager: Rationen & Lagervorräte", icon: "fa-solid fa-drumstick-bite", resizable: true },
+    classes: ["camp-rest-config"],
+    window: {
+      title: "Rest Manager: Rationen & Lagervorräte",
+      icon: "fa-solid fa-drumstick-bite",
+      resizable: true,
+      contentClasses: ["standard-form"]
+    },
     position: { width: 520, height: "auto" },
     form: { handler: SupplyConfigApp.onSubmit, closeOnSubmit: true },
     actions: { addRow: SupplyConfigApp.onAddRow, removeRow: SupplyConfigApp.onRemoveRow, reset: SupplyConfigApp.onReset }
@@ -500,28 +505,46 @@ class SupplyConfigApp extends ApplicationV2 {
 
   async _renderHTML() {
     const c = this.cfg;
-    const rows = c.entries.map((e, i) => `<tr>
-      <td><input type="text" name="name.${i}" value="${esc(e.name)}" placeholder="Name des Gegenstands"></td>
-      <td><input type="number" name="value.${i}" value="${Number(e.value) || 0}" min="0" step="0.5"></td>
-      <td><button type="button" class="cr-icon" data-action="removeRow" data-index="${i}"><i class="fa-solid fa-trash"></i></button></td>
-    </tr>`).join("");
+    const rows = c.entries.map((e, i) => `
+      <div class="form-group cr-entry">
+        <div class="form-fields">
+          <input type="text" name="name.${i}" value="${esc(e.name)}" placeholder="Name oder Identifier" aria-label="Gegenstand">
+          <input type="number" name="value.${i}" value="${Number(e.value) || 0}" min="0" step="0.5" aria-label="Wert">
+          <button type="button" class="icon fa-solid fa-trash" data-action="removeRow" data-index="${i}"
+            data-tooltip="Entfernen" aria-label="Entfernen"></button>
+        </div>
+      </div>`).join("");
     return `
-      <p class="cr-hint">Diese Gegenstände zählen als Ration/Lagervorrat. „Wert“ = wie viele Vorrats-Punkte ein Stück liefert.
-        Gegenstände kannst du auch aus der Seitenleiste oder einem Kompendium hierher ziehen.</p>
-      <div class="form-group"><label>Benötigte Punkte pro Charakter</label>
-        <input type="number" name="required" value="${Number(c.required) || 0}" min="0" step="0.5"></div>
-      <div class="form-group"><label>Teilübereinstimmung erlauben</label>
-        <input type="checkbox" name="partial" ${c.partial ? "checked" : ""}>
-        <p class="hint">„Rations (1 day)“ zählt dann auch für den Eintrag „Rations“.</p></div>
-      <div class="form-group"><label>Leere Gegenstände löschen</label>
-        <input type="checkbox" name="deleteEmpty" ${c.deleteEmpty ? "checked" : ""}>
-        <p class="hint">Sonst bleibt der Gegenstand mit Menge 0 im Inventar.</p></div>
-      <table class="cr-table"><thead><tr><th>Gegenstand</th><th>Wert</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-      <div class="cr-drop cr-config-drop"><i class="fa-solid fa-plus"></i> Gegenstand hierher ziehen</div>
-      <footer class="cr-footer">
-        <button type="button" data-action="reset"><i class="fa-solid fa-rotate-left"></i> Standard</button>
-        <button type="button" data-action="addRow"><i class="fa-solid fa-plus"></i> Zeile</button>
-        <button type="submit" class="cr-primary"><i class="fa-solid fa-floppy-disk"></i> Speichern</button>
+      <p class="hint">Diese Gegenstände zählen bei der langen Rast als Ration oder Lagervorrat.</p>
+      <fieldset>
+        <legend>Allgemein</legend>
+        <div class="form-group">
+          <label for="cr-required">Benötigte Punkte pro Charakter</label>
+          <div class="form-fields"><input type="number" id="cr-required" name="required" value="${Number(c.required) || 0}" min="0" step="0.5"></div>
+          <p class="hint">So viele Vorrats-Punkte braucht jeder Teilnehmer für eine lange Rast.</p>
+        </div>
+        <div class="form-group">
+          <label for="cr-partial">Teilübereinstimmung erlauben</label>
+          <div class="form-fields"><input type="checkbox" id="cr-partial" name="partial" ${c.partial ? "checked" : ""}></div>
+          <p class="hint">„Rations (1 day)“ zählt dann auch für den Eintrag „Rations“.</p>
+        </div>
+        <div class="form-group">
+          <label for="cr-delete">Leere Gegenstände löschen</label>
+          <div class="form-fields"><input type="checkbox" id="cr-delete" name="deleteEmpty" ${c.deleteEmpty ? "checked" : ""}></div>
+          <p class="hint">Sonst bleibt der Gegenstand mit Menge 0 im Inventar.</p>
+        </div>
+      </fieldset>
+      <fieldset class="cr-entries">
+        <legend>Gegenstände</legend>
+        <div class="cr-entry-head"><span>Name oder Identifier</span><span>Wert</span><span></span></div>
+        ${rows || '<p class="hint">Noch keine Gegenstände eingetragen.</p>'}
+        <div class="cr-config-drop"><i class="fa-solid fa-file-import"></i> Gegenstand aus Seitenleiste oder Kompendium hierher ziehen</div>
+        <button type="button" data-action="addRow"><i class="fa-solid fa-plus"></i> Zeile hinzufügen</button>
+        <p class="hint">„Wert“ = wie viele Vorrats-Punkte ein Stück liefert.</p>
+      </fieldset>
+      <footer class="form-footer">
+        <button type="button" data-action="reset"><i class="fa-solid fa-rotate-left"></i><span>Standard wiederherstellen</span></button>
+        <button type="submit"><i class="fa-solid fa-floppy-disk"></i><span>Speichern</span></button>
       </footer>`;
   }
 
@@ -584,32 +607,53 @@ class PenaltyConfigApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "camp-rest-penalty",
     tag: "form",
-    classes: ["camp-rest", "camp-rest-config"],
-    window: { title: "Rest Manager: Strafe bei fehlenden Vorräten", icon: "fa-solid fa-gavel", resizable: true },
+    classes: ["camp-rest-config"],
+    window: {
+      title: "Rest Manager: Strafe bei fehlenden Vorräten",
+      icon: "fa-solid fa-gavel",
+      resizable: true,
+      contentClasses: ["standard-form"]
+    },
     position: { width: 520, height: "auto" },
     form: { handler: PenaltyConfigApp.onSubmit, closeOnSubmit: true }
   };
 
   async _renderHTML() {
     const p = getPenalty();
-    const box = (name, label, hint) => `<div class="form-group"><label>${label}</label>
-      <input type="checkbox" name="${name}" ${p[name] ? "checked" : ""}>${hint ? `<p class="hint">${hint}</p>` : ""}</div>`;
+    const box = (name, label, hint) => `
+      <div class="form-group">
+        <label for="cr-${name}">${label}</label>
+        <div class="form-fields"><input type="checkbox" id="cr-${name}" name="${name}" ${p[name] ? "checked" : ""}></div>
+        ${hint ? `<p class="hint">${hint}</p>` : ""}
+      </div>`;
     return `
-      <p class="cr-hint">Diese Strafe bekommt jeder Charakter, der zu wenig Vorräte im Lager hat.
-        Im Lagerfenster kannst du sie für einzelne Charaktere trotzdem erlassen.</p>
-      ${box("denyRest", "Keine lange Rast", "Der Charakter erhält überhaupt keine Erholung. Die anderen Optionen außer Erschöpfung entfallen dann.")}
-      ${box("noHP", "Keine Trefferpunkte zurück")}
-      ${box("noHD", "Keine Trefferwürfel zurück")}
-      ${box("noSlots", "Keine Zauberplätze zurück", "Gilt auch für Paktmagie-Plätze.")}
-      ${box("malnutrition", "Zustand „Unterernährt“ setzen", "Zustand aus dnd5e: Solange er besteht, baut eine lange Rast keine Erschöpfung ab. Entfernen musst du ihn selbst.")}
-      <div class="form-group"><label>Zusätzliche Erschöpfungsstufen</label>
-        <input type="number" name="exhaustion" value="${Number(p.exhaustion) || 0}" min="0" max="6" step="1">
-        <p class="hint">Wird nach der Rast addiert (die normale Rast senkt Erschöpfung vorher um 1).</p></div>
-      <div class="form-group stacked"><label>Chatnachricht</label>
-        <textarea name="message" rows="3">${esc(p.message)}</textarea>
-        <p class="hint">{name} wird durch den Namen des Charakters ersetzt. Leer lassen = keine Nachricht.</p></div>
-      <footer class="cr-footer">
-        <button type="submit" class="cr-primary"><i class="fa-solid fa-floppy-disk"></i> Speichern</button>
+      <p class="hint">Diese Strafe bekommt jeder Charakter, der zu wenig Vorräte im Lager hat.
+        Im Lagerfenster kannst du sie für einzelne Charaktere erlassen.</p>
+      <fieldset>
+        <legend>Erholung</legend>
+        ${box("denyRest", "Keine lange Rast", "Der Charakter erholt sich überhaupt nicht. Die drei Optionen darunter entfallen dann.")}
+        ${box("noHP", "Keine Trefferpunkte zurück")}
+        ${box("noHD", "Keine Trefferwürfel zurück")}
+        ${box("noSlots", "Keine Zauberplätze zurück", "Gilt auch für Paktmagie-Plätze.")}
+      </fieldset>
+      <fieldset>
+        <legend>Zusätzliche Folgen</legend>
+        <div class="form-group">
+          <label for="cr-exhaustion">Zusätzliche Erschöpfungsstufen</label>
+          <div class="form-fields"><input type="number" id="cr-exhaustion" name="exhaustion" value="${Number(p.exhaustion) || 0}" min="0" max="6" step="1"></div>
+          <p class="hint">Wird nach der Rast addiert. Die normale Rast senkt Erschöpfung vorher um 1.</p>
+        </div>
+        ${box("malnutrition", "Zustand „Unterernährt“ setzen", "Zustand aus dnd5e: Solange er besteht, baut eine lange Rast keine Erschöpfung ab. Entfernen musst du ihn selbst.")}
+      </fieldset>
+      <fieldset>
+        <legend>Chatnachricht</legend>
+        <div class="form-group stacked">
+          <textarea name="message" rows="3" aria-label="Chatnachricht">${esc(p.message)}</textarea>
+          <p class="hint">{name} wird durch den Namen des Charakters ersetzt. Leer lassen = keine Nachricht.</p>
+        </div>
+      </fieldset>
+      <footer class="form-footer">
+        <button type="submit"><i class="fa-solid fa-floppy-disk"></i><span>Speichern</span></button>
       </footer>`;
   }
 
