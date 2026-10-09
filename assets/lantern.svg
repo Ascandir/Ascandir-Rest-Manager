@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 130">
+  <defs>
+    <radialGradient id="glass" cx=".5" cy=".6" r=".6">
+      <stop offset="0" stop-color="#fff2b8"/><stop offset=".35" stop-color="#ffb347"/>
+      <stop offset=".8" stop-color="#c2561a"/><stop offset="1" stop-color="#5a2208"/>
+    </radialGradient>
+    <linearGradient id="iron" x1="0" x2="1">
+      <stop offset="0" stop-color="#1a1410"/><stop offset=".5" stop-color="#5b4a38"/><stop offset="1" stop-color="#1a1410"/>
+    </linearGradient>
+  </defs>
+  <path d="M30 0 v8" stroke="#2a2018" stroke-width="2"/>
+  <circle cx="30" cy="12" r="5" fill="none" stroke="url(#iron)" stroke-width="3"/>
+  <path d="M18 30 L24 18 H36 L42 30 Z" fill="url(#iron)" stroke="#0e0a07"/>
+  <rect x="14" y="29" width="32" height="6" rx="2" fill="url(#iron)" stroke="#0e0a07"/>
+  <rect x="17" y="35" width="26" height="60" rx="3" fill="url(#glass)"/>
+  <path d="M30 80 C35 72 36 64 30 54 C29 62 25 64 25 72 C25 77 27 80 30 80 Z" fill="#fff7d6"/>
+  <g stroke="url(#iron)" stroke-width="3"><path d="M17 35 V95 M43 35 V95 M30 35 V48"/></g>
+  <path d="M17 62 H43" stroke="#2a2018" stroke-width="1.5" opacity=".6"/>
+  <rect x="13" y="94" width="34" height="7" rx="2" fill="url(#iron)" stroke="#0e0a07"/>
+  <path d="M18 101 L22 110 H38 L42 101 Z" fill="url(#iron)" stroke="#0e0a07"/>
+  <circle cx="30" cy="114" r="3" fill="#3a2e22"/>
+</svg>

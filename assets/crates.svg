@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 150">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5a32"/><stop offset="1" stop-color="#4a2c16"/></linearGradient>
+    <linearGradient id="sack" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b89466"/><stop offset="1" stop-color="#6e5232"/></linearGradient>
+    <linearGradient id="bread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3a75a"/><stop offset="1" stop-color="#8c4f1c"/></linearGradient>
+    <linearGradient id="pewter" x1="0" x2="1"><stop offset="0" stop-color="#5d5f62"/><stop offset=".45" stop-color="#c9cbcd"/><stop offset="1" stop-color="#4a4c4f"/></linearGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9a2219"/><stop offset="1" stop-color="#4a0c0a"/></linearGradient>
+  </defs>
+  <path d="M0 150 L0 112 Q40 100 80 118 Q130 108 176 128 L190 150 Z" fill="url(#cloth)" stroke="#2a0705"/>
+  <path d="M20 112 q10 14 6 34 M70 118 q6 12 2 30 M130 116 q8 14 4 32" stroke="#000" stroke-opacity=".25" stroke-width="3" fill="none"/>
+  <path d="M10 52 q-8 -30 18 -38 q-4 -10 6 -12 q10 0 8 12 q26 10 18 38 Z" fill="url(#sack)" stroke="#2a1a0c" stroke-width="1.5"/>
+  <path d="M24 14 q10 6 22 0" stroke="#2a1a0c" stroke-width="2" fill="none"/>
+  <rect x="4" y="50" width="86" height="62" rx="3" fill="url(#wood)" stroke="#1e1209" stroke-width="2"/>
+  <path d="M4 70 H90 M4 91 H90" stroke="#1e1209" stroke-width="1.5"/>
+  <path d="M8 54 L86 108" stroke="#2e1b0d" stroke-width="5"/>
+  <g fill="#c9a24e"><circle cx="10" cy="56" r="2"/><circle cx="84" cy="56" r="2"/><circle cx="10" cy="106" r="2"/><circle cx="84" cy="106" r="2"/></g>
+  <rect x="78" y="62" width="70" height="50" rx="3" fill="url(#wood)" stroke="#1e1209" stroke-width="2"/>
+  <path d="M78 79 H148 M78 96 H148" stroke="#1e1209" stroke-width="1.5"/>
+  <path d="M96 60 q10 -26 26 -10 q4 -14 18 -4 q4 10 -6 14 Z" fill="#4f7a2e" stroke="#22360f"/>
+  <ellipse cx="96" cy="122" rx="44" ry="15" fill="url(#bread)" stroke="#4a2408" stroke-width="1.5" transform="rotate(-8 96 122)"/>
+  <path d="M68 120 q6 -8 10 -12 M84 120 q6 -8 10 -12 M100 118 q6 -8 10 -12 M116 116 q6 -8 10 -12" stroke="#5a2c0c" stroke-width="2" fill="none" transform="rotate(-8 96 122)"/>
+  <path d="M146 92 H180 V138 Q163 144 146 138 Z" fill="url(#pewter)" stroke="#26282a" stroke-width="1.5"/>
+  <ellipse cx="163" cy="92" rx="17" ry="4" fill="#9a9c9f" stroke="#26282a"/>
+  <path d="M180 100 q14 2 12 16 q-2 12 -12 12" fill="none" stroke="url(#pewter)" stroke-width="5"/>
+  <path d="M146 104 H180 M146 130 H180" stroke="#3a3c3e" stroke-width="1.2"/>
+</svg>

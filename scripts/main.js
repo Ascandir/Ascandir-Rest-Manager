@@ -4,6 +4,8 @@
  * Foundry VTT v13/v14 · dnd5e 5.x
  */
 
+import { campView, DECO_HTML } from "./view.js";
+
 const MOD = "ascandir-rest-manager";
 const SOCKET = `module.${MOD}`;
 const { ApplicationV2, DialogV2 } = foundry.applications.api;
@@ -169,12 +171,16 @@ async function startRequest() {
     return ui.notifications.info("Es läuft bereits eine Rastanfrage.");
   }
   const chars = game.actors.filter((a) => a.type === "character" && a.hasPlayerOwner);
-  if (!chars.length) return ui.notifications.warn("Keine Spielercharaktere gefunden.");
+  const companions = game.actors.filter((a) => a.type === "npc" && a.hasPlayerOwner);
+  if (!chars.length && !companions.length) return ui.notifications.warn("Keine Spielercharaktere gefunden.");
 
+  const row = (a, checked) => `
+      <label><input type="checkbox" name="p" value="${a.id}" ${checked ? "checked" : ""}>
+      <img src="${esc(a.img)}" width="28" height="28"> ${esc(a.name)}</label>`;
   const content = `<p>Wer nimmt an der langen Rast teil?</p>
-    <div class="camp-rest-pick">${chars.map((a) => `
-      <label><input type="checkbox" name="p" value="${a.id}" checked>
-      <img src="${esc(a.img)}" width="28" height="28"> ${esc(a.name)}</label>`).join("")}
+    <div class="camp-rest-pick">
+      ${chars.length ? `<h4>Charaktere</h4>${chars.map((a) => row(a, true)).join("")}` : ""}
+      ${companions.length ? `<h4>Begleiter &amp; Reittiere</h4>${companions.map((a) => row(a, false)).join("")}` : ""}
     </div>`;
 
   const ids = await DialogV2.wait({
@@ -333,9 +339,9 @@ class CampRestApp extends ApplicationV2 {
 
   static DEFAULT_OPTIONS = {
     id: "camp-rest-app",
-    classes: ["camp-rest"],
+    classes: ["camp-rest", "camp-rest-window"],
     window: { title: "Lager für die lange Rast", icon: "fa-solid fa-campground", resizable: true },
-    position: { width: 620, height: "auto" },
+    position: { width: 1000, height: "auto" },
     actions: {
       unpledge: CampRestApp.onUnpledge,
       togglePenalty: CampRestApp.onTogglePenalty,
@@ -363,60 +369,29 @@ class CampRestApp extends ApplicationV2 {
     const isGM = game.user.isGM;
 
     const members = (state.participants ?? []).map((p) => {
+      const actor = game.actors.get(p.id);
       const have = suppliedFor(state, p.id);
-      const ok = have >= required;
-      const waived = !!state.noPenalty?.[p.id];
-      const pledges = state.pledges.filter((x) => x.toActorId === p.id).map((x) => {
-        const from = game.actors.get(x.fromActorId);
-        const canRemove = isGM || from?.isOwner;
-        return `<li>
-          <img src="${esc(x.img)}"><span class="cr-item">${esc(x.itemName)} ×${x.qty}</span>
-          <span class="cr-from">von ${esc(x.fromName)}</span>
-          ${canRemove ? `<button type="button" class="cr-icon" data-action="unpledge" data-pledge-id="${x.id}"
-            data-tooltip="Eins herausnehmen"><i class="fa-solid fa-minus"></i></button>` : ""}
-        </li>`;
-      }).join("");
+      return {
+        id: p.id,
+        name: actor?.name ?? p.name,
+        img: actor?.img ?? p.img,
+        have,
+        ok: have >= required,
+        waived: !!state.noPenalty?.[p.id],
+        pledges: state.pledges.filter((x) => x.toActorId === p.id).map((x) => ({
+          ...x, canRemove: isGM || !!game.actors.get(x.fromActorId)?.isOwner
+        }))
+      };
+    });
 
-      return `<section class="cr-member ${ok ? "ok" : "missing"}" data-actor-id="${p.id}">
-        <header>
-          <img src="${esc(p.img)}">
-          <span class="cr-name">${esc(p.name)}</span>
-          <span class="cr-status">${ok ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-xmark"></i>'} ${have}/${required}</span>
-        </header>
-        <ul class="cr-pledges">${pledges}</ul>
-        <div class="cr-drop"><i class="fa-solid fa-hand-holding"></i> Vorräte hier hineinziehen</div>
-        ${isGM && !ok ? `<button type="button" class="cr-penalty ${waived ? "waived" : ""}" data-action="togglePenalty" data-actor-id="${p.id}">
-          ${waived ? '<i class="fa-solid fa-dove"></i> Strafe erlassen' : '<i class="fa-solid fa-gavel"></i> Strafe wird angewendet'}</button>` : ""}
-      </section>`;
-    }).join("");
+    // Eigene Vorräte (alle eigenen Akteure, auch Begleiter oder ein Gruppenlager)
+    const supplies = isGM ? [] : game.actors.filter((a) => a.isOwner)
+      .flatMap((a) => a.items.contents.filter((i) => supplyValue(i) > 0).map((i) => ({
+        uuid: i.uuid, img: i.img, name: i.name, owner: a.name,
+        left: (Number(i.system.quantity) || 0) - pledgedOf(state, i.uuid)
+      })));
 
-    // Eigene Vorräte des Spielers als Ziehquelle
-    let mine = "";
-    if (!isGM) {
-      const items = game.actors.filter((a) => a.isOwner && a.type === "character")
-        .flatMap((a) => a.items.contents.filter((i) => supplyValue(i) > 0).map((i) => ({ a, i })));
-      mine = `<div class="cr-mine"><h4>Deine Vorräte</h4>${items.length
-        ? items.map(({ a, i }) => {
-          const left = (Number(i.system.quantity) || 0) - pledgedOf(state, i.uuid);
-          return `<div class="cr-supply ${left <= 0 ? "empty" : ""}" draggable="${left > 0}" data-uuid="${i.uuid}"
-            data-tooltip="${esc(a.name)}"><img src="${esc(i.img)}"> ${esc(i.name)} <b>${left}</b></div>`;
-        }).join("")
-        : "<p class='cr-hint'>Keine Rationen oder Lagervorräte im Inventar.</p>"}</div>`;
-    }
-
-    const done = (state.participants ?? []).filter((p) => suppliedFor(state, p.id) >= required).length;
-    const footer = isGM
-      ? `<footer class="cr-footer">
-          <button type="button" data-action="cancel"><i class="fa-solid fa-xmark"></i> Anfrage abbrechen</button>
-          <button type="button" class="cr-primary" data-action="finish"><i class="fa-solid fa-moon"></i> Lange Rast durchführen</button>
-        </footer>`
-      : `<footer class="cr-footer"><p class="cr-hint">Der Spielleiter startet die Rast, sobald alle bereit sind. Shift beim Ablegen = Anzahl wählen.</p></footer>`;
-
-    return `<div class="cr-summary"><i class="fa-solid fa-fire"></i> ${done} von ${(state.participants ?? []).length} versorgt
-      · benötigt pro Person: ${required}</div>
-      ${mine}
-      <div class="cr-members">${members}</div>
-      ${footer}`;
+    return campView({ isGM, required, members, supplies });
   }
 
   _replaceHTML(result, content) {
@@ -425,14 +400,18 @@ class CampRestApp extends ApplicationV2 {
 
   _onRender() {
     const el = this.element;
+    if (!el.querySelector(":scope > .cr-deco")) el.insertAdjacentHTML("beforeend", DECO_HTML);
+
     el.querySelectorAll(".cr-supply[draggable='true']").forEach((s) => {
       s.addEventListener("dragstart", (ev) => {
         ev.dataTransfer.setData("text/plain", JSON.stringify({ type: "Item", uuid: s.dataset.uuid }));
       });
     });
-    el.querySelectorAll(".cr-member").forEach((card) => {
+    el.querySelectorAll(".cr-card").forEach((card) => {
       card.addEventListener("dragover", (ev) => { ev.preventDefault(); card.classList.add("drag-over"); });
-      card.addEventListener("dragleave", () => card.classList.remove("drag-over"));
+      card.addEventListener("dragleave", (ev) => {
+        if (!card.contains(ev.relatedTarget)) card.classList.remove("drag-over");
+      });
       card.addEventListener("drop", (ev) => this.#onDrop(ev, card));
     });
   }

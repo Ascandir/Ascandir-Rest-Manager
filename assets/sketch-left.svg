@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 130" fill="none" stroke="#4a3220" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Fass -->
+  <path d="M14 70 Q8 92 14 116 H46 Q52 92 46 70 Z"/><path d="M12 80 H48 M11 106 H49 M30 70 V116" stroke-width="1"/>
+  <ellipse cx="30" cy="70" rx="16" ry="4"/>
+  <!-- Dreibein mit Kessel -->
+  <path d="M120 8 L82 120 M120 8 L158 120 M120 8 L124 122"/>
+  <path d="M116 4 L124 12 M124 4 L116 12"/>
+  <path d="M120 10 V48" stroke-dasharray="2 3"/>
+  <path d="M104 52 H136 Q138 78 120 82 Q102 78 104 52 Z"/><path d="M104 52 Q120 44 136 52"/>
+  <path d="M110 46 q4 -8 0 -14 M122 44 q5 -9 0 -16" stroke-width="1" opacity=".7"/>
+  <!-- Feuer -->
+  <path d="M100 116 L142 104 M100 104 L142 116"/>
+  <path d="M112 104 q4 -14 8 -20 q2 10 6 12 q2 -6 4 -8 q4 10 -2 16"/>
+  <path d="M88 120 q-4 -6 4 -8 M150 120 q6 -6 -2 -8 M70 122 H176" stroke-width="1.2"/>
+  <!-- Säcke & Kürbisse -->
+  <path d="M170 118 q-6 -22 10 -28 q-2 -6 4 -6 q4 2 2 6 q16 6 10 28 Z"/>
+  <path d="M206 118 q-10 0 -10 -10 q0 -10 12 -10 q12 0 12 10 q0 10 -14 10 Z"/><path d="M208 98 q2 -6 6 -6"/>
+  <path d="M60 118 q-4 -10 6 -12 q10 2 6 12" stroke-width="1.2"/>
+</svg>

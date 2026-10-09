@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 170">
+  <defs>
+    <linearGradient id="cloth" x1="0" x2="1">
+      <stop offset="0" stop-color="#4d0d0b"/><stop offset=".25" stop-color="#8a1c16"/>
+      <stop offset=".5" stop-color="#6e1611"/><stop offset=".75" stop-color="#8f2018"/>
+      <stop offset="1" stop-color="#4a0c0a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6dc93"/><stop offset=".5" stop-color="#c9a24e"/><stop offset="1" stop-color="#7a5a22"/>
+    </linearGradient>
+    <linearGradient id="emb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7e3a8"/><stop offset="1" stop-color="#d9b066"/>
+    </linearGradient>
+  </defs>
+  <path d="M9 12 H71 V152 L40 133 L9 152 Z" fill="url(#cloth)" stroke="#2a0705" stroke-width="1.5"/>
+  <path d="M13 14 H67 V145 L40 128 L13 145 Z" fill="none" stroke="url(#gold)" stroke-width="2"/>
+  <path d="M24 14 V138 M56 14 V138" stroke="#000" stroke-opacity=".18" stroke-width="5"/>
+  <path d="M33 14 V132" stroke="#fff" stroke-opacity=".06" stroke-width="4"/>
+  <g transform="translate(40 76)">
+    <path d="M0 -36 C9 -24 18 -15 15 0 C13 9 7 14 0 14 C-8 14 -15 8 -14 -1 C-13 -9 -7 -12 -7 -21 C-3 -16 -1 -11 -2 -6 C3 -12 4 -24 0 -36 Z" fill="url(#emb)"/>
+    <path d="M1 -10 C5 -4 8 1 6 6 C5 10 2 11 0 11 C-4 11 -6 8 -6 5 C-6 1 -2 -1 -2 -5 C0 -3 1 -1 1 1 C2 -2 3 -6 1 -10 Z" fill="#7a1a14"/>
+    <g fill="url(#emb)" stroke="#5a1410" stroke-width=".8">
+      <rect x="-20" y="15" width="40" height="7" rx="3.5" transform="rotate(18)"/>
+      <rect x="-20" y="15" width="40" height="7" rx="3.5" transform="rotate(-18)"/>
+    </g>
+  </g>
+  <rect x="2" y="5" width="76" height="7" rx="3.5" fill="url(#gold)" stroke="#3a2a10"/>
+  <circle cx="4" cy="8.5" r="4.5" fill="url(#gold)" stroke="#3a2a10"/>
+  <circle cx="76" cy="8.5" r="4.5" fill="url(#gold)" stroke="#3a2a10"/>
+  <g stroke="url(#gold)" stroke-width="1.5"><path d="M18 147 v14 M26 142 v14 M54 142 v14 M62 147 v14"/></g>
+</svg>

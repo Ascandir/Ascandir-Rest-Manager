@@ -1,123 +1,617 @@
 /* Ascandir - Rest Manager – Lagerfeuer-Optik */
 
+/* ---------- Schriften (SIL Open Font License, siehe fonts/OFL-LICENSE.txt) ---------- */
+@font-face { font-family: "CR Alegreya"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/alegreya-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "CR Alegreya"; font-weight: 400; font-style: italic; font-display: swap; src: url("../fonts/alegreya-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "CR Alegreya"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/alegreya-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "CR Alegreya"; font-weight: 700; font-style: italic; font-display: swap; src: url("../fonts/alegreya-latin-700-italic.woff2") format("woff2"); }
+@font-face { font-family: "CR Alegreya SC"; font-weight: 500; font-style: normal; font-display: swap; src: url("../fonts/alegreya-sc-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "CR Alegreya SC"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/alegreya-sc-latin-700-normal.woff2") format("woff2"); }
+
+/* ---------- Farben ---------- */
 .camp-rest {
-  --cr-ink: #2b1d12;
-  --cr-parch: #f3e6c8;
-  --cr-parch-dark: #e2cfa3;
-  --cr-ember: #c4521c;
-  --cr-ok: #3f7a3a;
-  --cr-bad: #9b2a1f;
-  --cr-line: #8a6a3f;
+  --cr-ink: #2b1a0e;
+  --cr-ink-soft: #5a4128;
+  --cr-parch: #ead8b0;
+  --cr-parch-hi: #f5e8c8;
+  --cr-parch-lo: #c9a96e;
+  --cr-gold: #c9a24e;
+  --cr-gold-hi: #f2d78e;
+  --cr-gold-lo: #6e5221;
+  --cr-red: #8e1f17;
+  --cr-red-hi: #b8321f;
+  --cr-ok: #3d6b2f;
+  --cr-ok-hi: #6fae4f;
+  --cr-leather: #1c120b;
+  --cr-leather-hi: #2e2015;
+  --cr-serif: "CR Alegreya", "Alegreya", Georgia, serif;
+  --cr-sc: "CR Alegreya SC", "CR Alegreya", Georgia, serif;
+  --cr-paper:
+    url("../assets/parchment.svg"),
+    radial-gradient(ellipse at 50% 40%, var(--cr-parch-hi) 0%, var(--cr-parch) 55%, var(--cr-parch-lo) 100%);
 }
 
-.camp-rest .window-content {
-  background: radial-gradient(ellipse at top, #fbf3df 0%, var(--cr-parch) 55%, var(--cr-parch-dark) 100%);
+/* =====================================================================
+   Lagerfenster
+   ===================================================================== */
+
+#camp-rest-app.application {
+  min-width: 420px;
   color: var(--cr-ink);
-  font-family: "Signika", sans-serif;
-  gap: 0.6rem;
-  padding: 0.8rem;
+  font-family: var(--cr-serif);
+  background:
+    url("../assets/wood.svg"),
+    linear-gradient(180deg, #3a2716 0%, #24170d 50%, #1a1009 100%);
+  border: 2px solid #0d0805;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 4px #3b2716,
+    inset 0 0 0 5px var(--cr-gold-lo),
+    inset 0 0 40px rgba(0, 0, 0, 0.7),
+    0 14px 50px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
 }
 
-.camp-rest .cr-summary {
-  font-family: "Modesto Condensed", "Signika", serif;
+/* --- Kopfzeile --- */
+#camp-rest-app .window-header {
+  position: relative;
+  height: 58px;
+  min-height: 58px;
+  padding: 0 14px 0 112px;
+  gap: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 220, 150, 0.06), rgba(0, 0, 0, 0.35)),
+    var(--cr-leather);
+  border: none;
+  border-bottom: 1px solid var(--cr-gold-lo);
+  box-shadow: 0 1px 0 rgba(242, 215, 142, 0.18), 0 3px 8px rgba(0, 0, 0, 0.6);
+  color: var(--cr-parch-hi);
+  margin: 6px 6px 0;
+  border-radius: 3px 3px 0 0;
+}
+#camp-rest-app .window-icon {
+  font-size: 1.5rem;
+  color: var(--cr-gold-hi);
+  text-shadow: 0 1px 2px #000;
+  flex: 0 0 auto;
+}
+#camp-rest-app .window-title {
+  font-family: var(--cr-serif);
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: 0.01em;
+  color: var(--cr-parch-hi);
+  text-shadow: 0 2px 3px #000;
+  margin: 0;
+  border: none;
+}
+#camp-rest-app .window-header .header-control {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  margin-left: auto;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  color: var(--cr-gold-hi);
+  background: radial-gradient(circle at 40% 35%, #4a3523, #140c07 70%);
+  border: 2px solid var(--cr-gold);
+  box-shadow: 0 0 0 2px #140c07, 0 2px 6px rgba(0, 0, 0, 0.8);
+  z-index: 3;
+}
+#camp-rest-app .window-header .header-control + .header-control { margin-left: 6px; }
+#camp-rest-app .window-header .header-control:hover {
+  color: #fff;
+  border-color: var(--cr-gold-hi);
+  box-shadow: 0 0 0 2px #140c07, 0 0 12px rgba(255, 170, 60, 0.6);
+}
+
+/* --- Inhalt --- */
+#camp-rest-app .window-content {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 20px 14px;
+  background: none;
+  color: var(--cr-ink);
+  overflow: hidden auto;
+}
+
+/* --- Verzierungen --- */
+#camp-rest-app .cr-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+#camp-rest-app.minimized .cr-deco > :not(.cr-corners) { display: none; }
+#camp-rest-app .cr-corners {
+  position: absolute;
+  inset: 2px;
+  background:
+    url("../assets/corner-tl.svg") top left / 46px no-repeat,
+    url("../assets/corner-tr.svg") top right / 46px no-repeat,
+    url("../assets/corner-bl.svg") bottom left / 46px no-repeat,
+    url("../assets/corner-br.svg") bottom right / 46px no-repeat;
+}
+#camp-rest-app .cr-banner {
+  position: absolute;
+  left: 18px;
+  top: 0;
+  width: 84px;
+  height: 178px;
+  background: url("../assets/banner.svg") center / contain no-repeat;
+  filter: drop-shadow(3px 5px 4px rgba(0, 0, 0, 0.7));
+  transform-origin: 50% 0;
+  animation: cr-sway 7s ease-in-out infinite;
+}
+#camp-rest-app .cr-lantern {
+  position: absolute;
+  right: 12px;
+  top: 60px;
+  width: 50px;
+  height: 110px;
+  background: url("../assets/lantern.svg") center / contain no-repeat;
+  filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.7));
+  transform-origin: 50% 0;
+  animation: cr-sway 5s ease-in-out infinite reverse;
+}
+#camp-rest-app .cr-glow {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 150px;
+  height: 150px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 180, 80, 0.45) 0%, rgba(255, 140, 40, 0.15) 40%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: cr-flicker 2.6s infinite;
+}
+#camp-rest-app .cr-crates {
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  width: 168px;
+  height: 115px;
+  background: url("../assets/crates.svg") left bottom / contain no-repeat;
+  filter: drop-shadow(2px -1px 4px rgba(0, 0, 0, 0.6));
+}
+
+@keyframes cr-sway {
+  0%, 100% { transform: rotate(-0.8deg); }
+  50% { transform: rotate(0.8deg); }
+}
+@keyframes cr-flicker {
+  0%, 100% { opacity: 0.85; }
+  12% { opacity: 1; }
+  25% { opacity: 0.7; }
+  40% { opacity: 0.95; }
+  55% { opacity: 0.75; }
+  70% { opacity: 1; }
+  85% { opacity: 0.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #camp-rest-app .cr-banner, #camp-rest-app .cr-lantern, #camp-rest-app .cr-glow { animation: none; }
+}
+
+/* --- Zusammenfassung --- */
+#camp-rest-app .cr-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 56px 0 92px;
+  padding: 10px 16px;
+  background: var(--cr-paper);
+  border-top: 2px solid #3b2716;
+  border-bottom: 2px solid #3b2716;
+  box-shadow: inset 0 0 18px rgba(90, 60, 20, 0.45), 0 2px 6px rgba(0, 0, 0, 0.5);
   font-size: 1.35rem;
-  text-align: center;
-  border-bottom: 2px solid var(--cr-line);
-  padding-bottom: 0.3rem;
+  color: var(--cr-ink);
 }
-.camp-rest .cr-summary i { color: var(--cr-ember); }
-
-.camp-rest .cr-hint { font-size: 0.85rem; font-style: italic; opacity: 0.8; margin: 0; }
-
-/* Eigene Vorräte */
-.camp-rest .cr-mine {
-  display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;
-  background: rgba(255, 255, 255, 0.35);
-  border: 1px dashed var(--cr-line);
-  border-radius: 6px;
-  padding: 0.4rem;
+#camp-rest-app .cr-summary::before,
+#camp-rest-app .cr-summary::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--cr-gold);
+  border: 1px solid #2a1c0a;
+  transform: translateX(-50%) rotate(45deg);
 }
-.camp-rest .cr-mine h4 { width: 100%; margin: 0 0 0.2rem; border: none; font-weight: bold; }
-.camp-rest .cr-supply {
-  display: flex; align-items: center; gap: 0.3rem;
-  padding: 0.15rem 0.5rem 0.15rem 0.15rem;
-  background: var(--cr-parch);
-  border: 1px solid var(--cr-line);
+#camp-rest-app .cr-summary::before { top: -6px; }
+#camp-rest-app .cr-summary::after { bottom: -6px; }
+#camp-rest-app .cr-summary > i { font-size: 1.9rem; color: var(--cr-red); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.4)); }
+#camp-rest-app .cr-summary b { font-weight: 700; }
+#camp-rest-app .cr-dot { margin: 0 0.45em; }
+
+/* --- Vorräte --- */
+#camp-rest-app .cr-stores {
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  background: var(--cr-paper);
+  border: 1px solid #1e130a;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
+    inset 0 0 0 4px rgba(110, 82, 33, 0.6),
+    inset 0 0 30px rgba(90, 60, 20, 0.5),
+    0 3px 8px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+#camp-rest-app .cr-sketch {
+  position: absolute;
+  bottom: 4px;
+  height: 112px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+#camp-rest-app .cr-sketch.left { left: 10px; width: 210px; background: url("../assets/sketch-left.svg") left bottom / contain no-repeat; }
+#camp-rest-app .cr-sketch.right { right: 60px; width: 230px; background: url("../assets/sketch-right.svg") right bottom / contain no-repeat; }
+#camp-rest-app .cr-stores-body {
+  position: relative;
+  flex: 1;
+  padding: 14px 300px 14px 240px;
+}
+#camp-rest-app .cr-stores h3 {
+  margin: 0 0 6px;
+  border: none;
+  font-family: var(--cr-serif);
+  font-weight: 700;
+  font-size: 1.45rem;
+  color: var(--cr-ink);
+}
+#camp-rest-app .cr-hint {
+  margin: 0;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--cr-ink-soft);
+}
+#camp-rest-app .cr-supplies { display: flex; flex-wrap: wrap; gap: 6px; }
+#camp-rest-app .cr-supply {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 3px;
+  background: linear-gradient(180deg, #fbf1d8, #e6d1a3);
+  border: 1px solid var(--cr-gold-lo);
   border-radius: 999px;
+  box-shadow: 0 2px 3px rgba(60, 40, 15, 0.45);
   cursor: grab;
+  font-size: 0.95rem;
+  transition: transform 0.12s, box-shadow 0.12s;
 }
-.camp-rest .cr-supply img { width: 24px; height: 24px; border: none; border-radius: 50%; }
-.camp-rest .cr-supply.empty { opacity: 0.45; cursor: not-allowed; }
+#camp-rest-app .cr-supply:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(60, 40, 15, 0.5); }
+#camp-rest-app .cr-supply:active { cursor: grabbing; }
+#camp-rest-app .cr-supply img { width: 28px; height: 28px; border: 1px solid var(--cr-gold-lo); border-radius: 50%; object-fit: cover; background: #2a1c10; }
+#camp-rest-app .cr-supply-name { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#camp-rest-app .cr-supply b {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--cr-red);
+  color: var(--cr-parch-hi);
+  font-size: 0.85rem;
+}
+#camp-rest-app .cr-supply.empty { opacity: 0.45; filter: grayscale(0.6); cursor: not-allowed; }
+#camp-rest-app .cr-supply.empty b { background: #6b5a45; }
 
-/* Gruppenkarten */
-.camp-rest .cr-members {
+/* --- Leiste über den Karten --- */
+#camp-rest-app .cr-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #24180f, #130c07);
+  border-top: 1px solid var(--cr-gold-lo);
+  border-bottom: 1px solid var(--cr-gold-lo);
+  box-shadow: inset 0 1px 0 rgba(242, 215, 142, 0.12);
+  color: var(--cr-parch-hi);
+}
+#camp-rest-app .cr-bar-title { font-weight: 700; font-size: 1.3rem; }
+#camp-rest-app .cr-bar-title i { color: var(--cr-gold); margin-right: 8px; }
+#camp-rest-app .cr-bar-count { font-size: 1rem; color: #d9c69c; white-space: nowrap; }
+
+/* --- Gruppenkarten --- */
+#camp-rest-app .cr-members {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 14px;
+  padding: 2px 4px;
 }
-.camp-rest .cr-member {
-  display: flex; flex-direction: column; gap: 0.3rem;
-  background: rgba(255, 255, 255, 0.5);
-  border: 2px solid var(--cr-bad);
-  border-radius: 8px;
-  padding: 0.4rem;
-  transition: box-shadow 0.15s, transform 0.15s;
+#camp-rest-app .cr-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 10px 10px;
+  background: var(--cr-paper);
+  border: 1px solid #1e130a;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
+    inset 0 0 0 4px rgba(110, 82, 33, 0.55),
+    inset 0 0 22px rgba(90, 60, 20, 0.45),
+    0 4px 10px rgba(0, 0, 0, 0.65);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.camp-rest .cr-member.ok { border-color: var(--cr-ok); }
-.camp-rest .cr-member.drag-over { box-shadow: 0 0 12px var(--cr-ember); transform: scale(1.02); }
-.camp-rest .cr-member header { display: flex; align-items: center; gap: 0.4rem; }
-.camp-rest .cr-member header img { width: 36px; height: 36px; border: 1px solid var(--cr-line); border-radius: 4px; object-fit: cover; }
-.camp-rest .cr-name { flex: 1; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.camp-rest .cr-status { font-weight: bold; color: var(--cr-bad); white-space: nowrap; }
-.camp-rest .cr-member.ok .cr-status { color: var(--cr-ok); }
+#camp-rest-app .cr-card.drag-over {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    inset 0 0 0 3px rgba(245, 232, 200, 0.35),
+    inset 0 0 0 4px var(--cr-gold),
+    inset 0 0 22px rgba(90, 60, 20, 0.45),
+    0 0 18px rgba(255, 150, 50, 0.85);
+}
 
-.camp-rest .cr-pledges { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; }
-.camp-rest .cr-pledges li { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; }
-.camp-rest .cr-pledges img { width: 20px; height: 20px; border: none; }
-.camp-rest .cr-item { flex: 1; }
-.camp-rest .cr-from { opacity: 0.7; font-size: 0.75rem; }
+#camp-rest-app .cr-portrait {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, #6e5221, #f2d78e, #a07a35, #f2d78e, #6e5221, #c9a24e, #6e5221);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+#camp-rest-app .cr-portrait img {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #1a110a;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  background: radial-gradient(circle at 50% 35%, #4a3a2a, #120c07);
+}
+#camp-rest-app .cr-card.ok .cr-portrait {
+  box-shadow: 0 0 0 2px rgba(111, 174, 79, 0.6), 0 0 14px rgba(111, 174, 79, 0.55), 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+#camp-rest-app .cr-badge {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--cr-ok-hi), var(--cr-ok));
+  border: 2px solid var(--cr-gold-hi);
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
 
-.camp-rest .cr-drop {
-  border: 1px dashed var(--cr-line);
-  border-radius: 6px;
-  padding: 0.35rem;
+#camp-rest-app .cr-plate {
+  align-self: stretch;
+  margin: -2px 4px 0;
+  padding: 3px 8px;
   text-align: center;
-  font-size: 0.8rem;
-  opacity: 0.75;
+  font-family: var(--cr-serif);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  color: var(--cr-ink);
+  background: linear-gradient(180deg, #f6e9c9, #dcc392);
+  border: 1px solid #6e5221;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px rgba(255, 248, 225, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.camp-rest .cr-drop.drag-over { box-shadow: 0 0 10px var(--cr-ember); opacity: 1; }
 
-/* Knöpfe */
-.camp-rest button { color: var(--cr-ink); }
-.camp-rest .cr-icon {
-  flex: 0 0 auto; width: 22px; height: 22px; line-height: 20px; padding: 0;
-  font-size: 0.7rem; min-height: 0;
+#camp-rest-app .cr-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
 }
-.camp-rest .cr-penalty { font-size: 0.8rem; background: rgba(155, 42, 31, 0.15); }
-.camp-rest .cr-penalty.waived { background: rgba(63, 122, 58, 0.18); }
+#camp-rest-app .cr-count i { color: #9a5f2a; font-size: 1.2rem; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35)); }
+#camp-rest-app .cr-count b { color: var(--cr-red); font-weight: 700; }
+#camp-rest-app .cr-card.ok .cr-count b { color: var(--cr-ok); }
 
-.camp-rest .cr-footer { display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; margin-top: 0.3rem; }
-.camp-rest .cr-footer button { flex: 0 1 auto; }
-.camp-rest .cr-primary { background: var(--cr-ember); color: #fff; border-color: #7a2f0e; font-weight: bold; }
-.camp-rest .cr-primary:hover { background: #d9652c; }
+#camp-rest-app .cr-pledges {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+#camp-rest-app .cr-pledges li {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 2px 1px 1px;
+  background: rgba(255, 248, 225, 0.6);
+  border: 1px solid rgba(110, 82, 33, 0.6);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+#camp-rest-app .cr-pledges img { width: 20px; height: 20px; border: none; border-radius: 50%; object-fit: cover; }
+#camp-rest-app .cr-minus {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  padding: 0;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  font-size: 0.6rem;
+  border-radius: 50%;
+  color: var(--cr-parch-hi);
+  background: var(--cr-red);
+  border: 1px solid #4a0c0a;
+}
+#camp-rest-app .cr-minus:hover { background: var(--cr-red-hi); }
 
-/* Einstellungen */
+#camp-rest-app .cr-drop {
+  align-self: stretch;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 6px;
+  border: 1px dashed #6e5221;
+  border-radius: 4px;
+  background: rgba(255, 248, 225, 0.25);
+  font-size: 0.92rem;
+  color: var(--cr-ink);
+  white-space: nowrap;
+}
+#camp-rest-app .cr-drop i { color: var(--cr-ink-soft); }
+#camp-rest-app .cr-card.drag-over .cr-drop { border-style: solid; border-color: var(--cr-red); background: rgba(255, 200, 120, 0.35); }
+
+#camp-rest-app .cr-penalty {
+  align-self: stretch;
+  min-height: 0;
+  padding: 4px 6px;
+  font-family: var(--cr-serif);
+  font-size: 0.9rem;
+  color: var(--cr-parch-hi);
+  background: linear-gradient(180deg, var(--cr-red-hi), var(--cr-red));
+  border: 1px solid #4a0c0a;
+  border-radius: 3px;
+}
+#camp-rest-app .cr-penalty.waived { background: linear-gradient(180deg, #5d8f45, var(--cr-ok)); border-color: #1f3a15; }
+
+/* --- Fußzeile --- */
+#camp-rest-app .cr-footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+  padding: 14px 4px 2px 170px;
+  border-top: 1px solid var(--cr-gold-lo);
+  min-height: 74px;
+}
+#camp-rest-app .cr-footer::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  width: 8px;
+  height: 8px;
+  background: var(--cr-gold);
+  border: 1px solid #2a1c0a;
+  transform: translateX(-50%) rotate(45deg);
+}
+#camp-rest-app .cr-footer-hint {
+  flex: 1;
+  text-align: center;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #cbb68a;
+}
+#camp-rest-app .cr-footer-buttons { display: flex; gap: 10px; flex: 0 0 auto; }
+#camp-rest-app .cr-btn {
+  height: 52px;
+  min-width: 140px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--cr-serif);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--cr-parch-hi);
+  background: linear-gradient(180deg, #3a2a1c, #1a110a);
+  border: 1px solid var(--cr-gold-lo);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(242, 215, 142, 0.15), 0 2px 6px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+#camp-rest-app .cr-btn:hover:not(:disabled) { border-color: var(--cr-gold); color: #fff; }
+#camp-rest-app .cr-btn.cr-primary {
+  min-width: 260px;
+  background: linear-gradient(180deg, #a8341c, #6a1a10);
+  border-color: var(--cr-gold);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.35), 0 0 0 1px #2a0705, 0 3px 10px rgba(0, 0, 0, 0.6);
+}
+#camp-rest-app .cr-btn.cr-primary:hover:not(:disabled) { box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.35), 0 0 0 1px #2a0705, 0 0 16px rgba(255, 140, 50, 0.7); }
+#camp-rest-app .cr-btn:disabled,
+#camp-rest-app .cr-btn.cr-primary:disabled {
+  cursor: not-allowed;
+  color: #6d5c45;
+  background: linear-gradient(180deg, #2a1f16, #1a120c);
+  border-color: #3e3021;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* --- Schmale Fenster --- */
+@container (max-width: 900px) {
+  #camp-rest-app .cr-sketch.right { display: none; }
+  #camp-rest-app .cr-stores-body { padding-right: 70px; }
+}
+@container (max-width: 700px) {
+  #camp-rest-app .cr-sketch { display: none; }
+  #camp-rest-app .cr-stores-body { padding: 14px 64px 14px 18px; }
+  #camp-rest-app .cr-summary { font-size: 1.1rem; }
+  #camp-rest-app .cr-footer { flex-direction: column; padding-left: 4px; }
+  #camp-rest-app .cr-btn.cr-primary { min-width: 0; }
+  #camp-rest-app .cr-footer-buttons { align-self: stretch; justify-content: flex-end; }
+}
+
+/* =====================================================================
+   Einstellungsfenster
+   ===================================================================== */
+
+.camp-rest-config .window-content {
+  background: var(--cr-paper);
+  color: var(--cr-ink);
+  font-family: var(--cr-serif);
+  gap: 0.6rem;
+  padding: 0.9rem;
+}
+.camp-rest-config .cr-hint { font-size: 0.95rem; font-style: italic; color: var(--cr-ink-soft); margin: 0; }
 .camp-rest-config .form-group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.6rem; }
 .camp-rest-config .form-group > label { flex: 1; font-weight: bold; }
 .camp-rest-config .form-group input[type="number"] { flex: 0 0 80px; }
-.camp-rest-config .form-group .hint { width: 100%; margin: 0; font-size: 0.8rem; opacity: 0.7; }
+.camp-rest-config .form-group .hint { width: 100%; margin: 0; font-size: 0.85rem; opacity: 0.75; }
 .camp-rest-config .form-group.stacked { flex-direction: column; align-items: stretch; }
 .camp-rest-config textarea { width: 100%; resize: vertical; }
 .camp-rest-config .cr-table { width: 100%; border-collapse: collapse; margin: 0; }
-.camp-rest-config .cr-table th { text-align: left; border-bottom: 1px solid var(--cr-line); }
+.camp-rest-config .cr-table th { text-align: left; border-bottom: 1px solid var(--cr-gold-lo); }
 .camp-rest-config .cr-table td:nth-child(2) { width: 80px; }
 .camp-rest-config .cr-table td:nth-child(3) { width: 30px; }
+.camp-rest-config .cr-icon { width: 24px; height: 24px; min-height: 0; padding: 0; line-height: 22px; font-size: 0.7rem; }
+.camp-rest-config .cr-drop {
+  border: 1px dashed var(--cr-gold-lo);
+  border-radius: 6px;
+  padding: 0.45rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+.camp-rest-config .cr-drop.drag-over { box-shadow: 0 0 10px #c4521c; opacity: 1; }
+.camp-rest-config .cr-footer { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.3rem; }
+.camp-rest-config .cr-primary { background: var(--cr-red); color: #fff; border-color: #4a0c0a; font-weight: bold; }
 
-/* Seitenleiste & Chat */
+/* =====================================================================
+   Seitenleiste, Auswahl-Dialog, Chat
+   ===================================================================== */
+
 .camp-rest-btn { flex: 1 1 100%; }
 .camp-rest-pick { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.5rem; }
+.camp-rest-pick h4 { margin: 0.4rem 0 0; border-bottom: 1px solid currentColor; opacity: 0.85; }
 .camp-rest-pick label { display: flex; align-items: center; gap: 0.4rem; }
-.camp-rest-pick img { border: none; border-radius: 4px; }
+.camp-rest-pick img { border: none; border-radius: 4px; object-fit: cover; }
 .camp-rest-chat h3 { margin: 0 0 0.3rem; border-bottom: 1px solid #8a6a3f; }
 .camp-rest-chat h3 i { color: #c4521c; }
 .camp-rest-chat.penalty h3 i { color: #9b2a1f; }

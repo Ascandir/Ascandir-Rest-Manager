@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 130" fill="none" stroke="#4a3220" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Gebüsch -->
+  <path d="M8 120 q4 -18 16 -16 q2 -14 16 -10 q10 -10 20 2 q14 -2 12 14 q10 4 6 10"/>
+  <path d="M30 104 l4 10 M46 98 l2 14 M60 104 l-4 10" stroke-width="1"/>
+  <!-- Fass liegend/stehend -->
+  <path d="M110 40 Q102 72 110 106 H156 Q164 72 156 40 Z"/><ellipse cx="133" cy="40" rx="23" ry="6"/>
+  <path d="M106 54 H160 M105 92 H161" stroke-width="1"/><path d="M124 46 V106 M142 46 V106" stroke-width=".8" opacity=".6"/>
+  <!-- Sack -->
+  <path d="M164 120 q-12 -30 8 -42 q-4 -8 4 -10 q8 0 6 10 q22 10 10 42 Z"/><path d="M170 80 q8 4 16 0" stroke-width="1"/>
+  <!-- Kiste -->
+  <path d="M196 62 H252 V120 H196 Z"/><path d="M196 62 L252 120 M196 82 H252 M196 100 H252" stroke-width="1"/>
+  <path d="M200 62 q6 -14 16 -4 q8 -12 18 -2 q10 -8 14 6" stroke-width="1.2"/>
+  <!-- kleines Fass -->
+  <path d="M74 84 Q70 100 74 120 H100 Q104 100 100 84 Z"/><ellipse cx="87" cy="84" rx="13" ry="3.5"/>
+  <path d="M90 128 H256" stroke-width="1.2"/>
+</svg>
